@@ -50,9 +50,6 @@
         <button class="bnav" onclick="prev()">« Wg -1</button>
         <button class="bnav" onclick="next()">Wg » +1</button>
 
-        <button id="frontGangwayClosedButton" class="bgangway" style="grid-column: span 2;" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
-        <button id="rearGangwayClosedButton" class="bgangway" style="grid-column: span 2;" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
-
         <button class="bexp" style="grid-column: span 4; aspect-ratio: auto; height: 40px;" onclick="save()">Speichern</button>
         
         <button class="bwres btn-small" style="grid-column: span 2;" onclick="resetCurrentCar()">Wg. Reset</button>
@@ -61,6 +58,9 @@
 
     <div class="row" style="margin-top:10px;">
         <input id="comments" placeholder="Bemerkung zum Wagen..." oninput="updateComment()">
+        <button id="frontGangwayClosedButton" class="bgangway btn-small" style="grid-column: span 2; height: 33.5px;" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
+        <button id="rearGangwayClosedButton" class="bgangway btn-small" style="grid-column: span 2; height: 33.5px;" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
+
     </div>
 
 <script>
