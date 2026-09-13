@@ -75,8 +75,6 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
         }
         .gangway-marker.front { left: -14px; }
         .gangway-marker.rear { right: -14px; }
-        .gangway-marker.all { top: 22px; right: 8px; margin-top: 0; }
-
         .wagon-nr { background: #333; color: white; text-align: center; font-size: 11px; padding: 3px 0; font-weight: bold; }
         /* Der class-strip wird jetzt über JavaScript mit einem Gradient gefüllt */
 .class-strip { 
@@ -241,7 +239,6 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
     const a = parseInt(w.pax_a || 0);
     const b = parseInt(w.pax_b || 0);
     const wr = parseInt(w.pax_wr || 0);
-                const gangwayClosed = Number(w.uebergang_geschlossen) === 1;
                 const frontGangwayClosed = Number(w.uebergang_vorne_geschlossen) === 1;
                 const rearGangwayClosed = Number(w.uebergang_hinten_geschlossen) === 1;
 
@@ -271,7 +268,6 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
     trainHtml += `
         <div class="wagon">
             <div class="wagon-nr">Wagen ${w.wagen_index}</div>
-            ${gangwayClosed ? '<span class="gangway-marker all" title="Wagenübergang geschlossen"></span>' : ''}
             ${frontGangwayClosed ? '<span class="gangway-marker front" title="Wagenübergang vorne geschlossen"></span>' : ''}
             ${rearGangwayClosed ? '<span class="gangway-marker rear" title="Wagenübergang hinten geschlossen"></span>' : ''}
             <div class="class-strip" style="${gradientStyle}"></div>
@@ -317,7 +313,6 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
                     <label>Hunde<input type="number" min="0" value="${Number(car.hunde || 0)}" data-field="dogs"></label>
                     <label>Velos<input type="number" min="0" value="${Number(car.velos || 0)}" data-field="bikes"></label>
                     <label class="comments-field">Bemerkung<input type="text" value="${escapeHtml(car.bemerkung || '')}" data-field="comments"></label>
-                    <label class="check-label">Gesamt<input type="checkbox" data-field="gangwayClosed" ${Number(car.uebergang_geschlossen) === 1 ? 'checked' : ''}></label>
                     <label class="check-label">Vorne<input type="checkbox" data-field="frontGangwayClosed" ${Number(car.uebergang_vorne_geschlossen) === 1 ? 'checked' : ''}></label>
                     <label class="check-label">Hinten<input type="checkbox" data-field="rearGangwayClosed" ${Number(car.uebergang_hinten_geschlossen) === 1 ? 'checked' : ''}></label>
                     <button type="button" class="btn-del" onclick="removeEditCar(this)">Entfernen</button>
@@ -348,7 +343,6 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
             hunde: row.querySelector('[data-field="dogs"]').value,
             velos: row.querySelector('[data-field="bikes"]').value,
             bemerkung: row.querySelector('[data-field="comments"]').value,
-            uebergang_geschlossen: row.querySelector('[data-field="gangwayClosed"]').checked ? 1 : 0,
             uebergang_vorne_geschlossen: row.querySelector('[data-field="frontGangwayClosed"]').checked ? 1 : 0,
             uebergang_hinten_geschlossen: row.querySelector('[data-field="rearGangwayClosed"]').checked ? 1 : 0
         }));
@@ -377,7 +371,6 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
                 dogs: value('dogs').value,
                 bikes: value('bikes').value,
                 comments: value('comments').value,
-                gangwayClosed: value('gangwayClosed').checked,
                 frontGangwayClosed: value('frontGangwayClosed').checked,
                 rearGangwayClosed: value('rearGangwayClosed').checked
             };

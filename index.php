@@ -50,9 +50,8 @@
         <button class="bnav" onclick="prev()">« Wg -1</button>
         <button class="bnav" onclick="next()">Wg » +1</button>
 
-        <button id="gangwayClosedButton" class="bgangway" style="grid-column: span 2;" onclick="toggleGangway('gangwayClosed')">Übergang geschlossen</button>
-        <button id="frontGangwayClosedButton" class="bgangway" style="grid-column: span 1;" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
-        <button id="rearGangwayClosedButton" class="bgangway" style="grid-column: span 1;" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
+        <button id="frontGangwayClosedButton" class="bgangway" style="grid-column: span 2;" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
+        <button id="rearGangwayClosedButton" class="bgangway" style="grid-column: span 2;" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
 
         <button class="bexp" style="grid-column: span 4; aspect-ratio: auto; height: 40px;" onclick="save()">Speichern</button>
         
@@ -65,7 +64,7 @@
     </div>
 
 <script>
-    const emptyCar = () => ({ firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'', gangwayClosed:false, frontGangwayClosed:false, rearGangwayClosed:false });
+    const emptyCar = () => ({ firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'', frontGangwayClosed:false, rearGangwayClosed:false });
     let data = [emptyCar()];
     let currentCar = 1;
 
@@ -149,7 +148,7 @@ document.addEventListener("click", function (e) {
             `A: ${cur.firstClass} | B: ${cur.secondClass} | WR: ${cur.restaurantClass}` + 
             ` | Hunde: ${cur.dogs} | Velos: ${cur.bikes}`;
         document.getElementById('comments').value = cur.comments || '';
-        ['gangwayClosed', 'frontGangwayClosed', 'rearGangwayClosed'].forEach(field => {
+        ['frontGangwayClosed', 'rearGangwayClosed'].forEach(field => {
             const button = document.getElementById(field + 'Button');
             button.classList.toggle('active', Boolean(cur[field]));
             button.setAttribute('aria-pressed', Boolean(cur[field]));

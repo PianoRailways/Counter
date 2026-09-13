@@ -50,7 +50,7 @@ if ($action === 'update' && $id > 0) {
         $stmt = $pdo->prepare("DELETE FROM wagen_daten WHERE fahrt_id = ?");
         $stmt->execute([$id]);
 
-        $stmt = $pdo->prepare("INSERT INTO wagen_daten (fahrt_id, wagen_index, pax_a, pax_b, pax_wr, hunde, velos, bemerkung, uebergang_geschlossen, uebergang_vorne_geschlossen, uebergang_hinten_geschlossen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO wagen_daten (fahrt_id, wagen_index, pax_a, pax_b, pax_wr, hunde, velos, bemerkung, uebergang_vorne_geschlossen, uebergang_hinten_geschlossen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         foreach (($input['cars'] ?? []) as $index => $car) {
             $stmt->execute([
                 $id,
@@ -61,7 +61,6 @@ if ($action === 'update' && $id > 0) {
                 max(0, (int)($car['dogs'] ?? 0)),
                 max(0, (int)($car['bikes'] ?? 0)),
                 $car['comments'] ?? '',
-                !empty($car['gangwayClosed']) ? 1 : 0,
                 !empty($car['frontGangwayClosed']) ? 1 : 0,
                 !empty($car['rearGangwayClosed']) ? 1 : 0
             ]);

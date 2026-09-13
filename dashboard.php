@@ -175,7 +175,6 @@ if (!isset($adminPassword)) {
                     <label>Hunde<input type="number" min="0" value="${Number(car.hunde || 0)}" data-field="dogs"></label>
                     <label>Velos<input type="number" min="0" value="${Number(car.velos || 0)}" data-field="bikes"></label>
                     <label class="comments-field">Bemerkung<input type="text" value="${escapeHtml(car.bemerkung || '')}" data-field="comments"></label>
-                    <label class="check-label">Gesamt<input type="checkbox" data-field="gangwayClosed" ${Number(car.uebergang_geschlossen) === 1 ? 'checked' : ''}></label>
                     <label class="check-label">Vorne<input type="checkbox" data-field="frontGangwayClosed" ${Number(car.uebergang_vorne_geschlossen) === 1 ? 'checked' : ''}></label>
                     <label class="check-label">Hinten<input type="checkbox" data-field="rearGangwayClosed" ${Number(car.uebergang_hinten_geschlossen) === 1 ? 'checked' : ''}></label>
                     <button type="button" class="btn-del" onclick="removeEditCar(this)">Entfernen</button>
@@ -206,7 +205,6 @@ if (!isset($adminPassword)) {
             hunde: row.querySelector('[data-field="dogs"]').value,
             velos: row.querySelector('[data-field="bikes"]').value,
             bemerkung: row.querySelector('[data-field="comments"]').value,
-            uebergang_geschlossen: row.querySelector('[data-field="gangwayClosed"]').checked ? 1 : 0,
             uebergang_vorne_geschlossen: row.querySelector('[data-field="frontGangwayClosed"]').checked ? 1 : 0,
             uebergang_hinten_geschlossen: row.querySelector('[data-field="rearGangwayClosed"]').checked ? 1 : 0
         }));
@@ -235,7 +233,6 @@ if (!isset($adminPassword)) {
                 dogs: value('dogs').value,
                 bikes: value('bikes').value,
                 comments: value('comments').value,
-                gangwayClosed: value('gangwayClosed').checked,
                 frontGangwayClosed: value('frontGangwayClosed').checked,
                 rearGangwayClosed: value('rearGangwayClosed').checked
             };
@@ -343,11 +340,9 @@ if (!isset($adminPassword)) {
             
             // Jeder Wagen bekommt eine eigene Zeile in DERSELBEN Tabelle
             fahrt.wagen.forEach(w => {
-                const gangwayClosed = Number(w.uebergang_geschlossen) === 1;
                 const frontGangwayClosed = Number(w.uebergang_vorne_geschlossen) === 1;
                 const rearGangwayClosed = Number(w.uebergang_hinten_geschlossen) === 1;
                 const gangwayTitle = [
-                    gangwayClosed ? 'Wagenübergang geschlossen' : '',
                     frontGangwayClosed ? 'vorne geschlossen' : '',
                     rearGangwayClosed ? 'hinten geschlossen' : ''
                 ].filter(Boolean).join(', ');
@@ -379,13 +374,13 @@ if (!isset($adminPassword)) {
             return;
         }
 
-        let csvContent = "\ufeff" + "ID;Zeitpunkt;Produkt;Zugnummer;Fz-Typ;Von;Bis;Wagen;A;B;WR;Hunde;Velos;Übergang;Übergang vorne;Übergang hinten;Bemerkung\r\n";
+        let csvContent = "\ufeff" + "ID;Zeitpunkt;Produkt;Zugnummer;Fz-Typ;Von;Bis;Wagen;A;B;WR;Hunde;Velos;Übergang vorne;Übergang hinten;Bemerkung\r\n";
         window.currentData.forEach(row => {
             const line = [
                 row.id, row.datum || row.zeit_erfasst, row.produkt_id, row.zugnummer,
                 row.fahrzeug_typ || "", `"${row.von_station}"`, `"${row.bis_station}"`,
                 row.wagen_index, row.pax_a, row.pax_b, row.pax_wr, row.hunde, row.velos,
-                row.uebergang_geschlossen, row.uebergang_vorne_geschlossen, row.uebergang_hinten_geschlossen,
+                row.uebergang_vorne_geschlossen, row.uebergang_hinten_geschlossen,
                 `"${(row.bemerkung || "").replace(/"/g, '""')}"`
             ].join(";");
             csvContent += line + "\r\n";

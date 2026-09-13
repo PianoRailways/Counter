@@ -30,7 +30,7 @@ try {
     
     $fahrtId = $pdo->lastInsertId();
 
-    $stmtWagen = $pdo->prepare("INSERT INTO wagen_daten (fahrt_id, wagen_index, pax_a, pax_b, pax_wr, hunde, velos, bemerkung, uebergang_geschlossen, uebergang_vorne_geschlossen, uebergang_hinten_geschlossen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmtWagen = $pdo->prepare("INSERT INTO wagen_daten (fahrt_id, wagen_index, pax_a, pax_b, pax_wr, hunde, velos, bemerkung, uebergang_vorne_geschlossen, uebergang_hinten_geschlossen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
     foreach ($input['cars'] as $idx => $car) {
         if (!$car) continue;
@@ -43,7 +43,6 @@ try {
             $car['dogs'] ?? 0,
             $car['bikes'] ?? 0,
             $car['comments'] ?? '',
-            !empty($car['gangwayClosed']) ? 1 : 0,
             !empty($car['frontGangwayClosed']) ? 1 : 0,
             !empty($car['rearGangwayClosed']) ? 1 : 0
         ]);
