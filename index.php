@@ -167,7 +167,20 @@ document.addEventListener("click", function (e) {
         }
     }
 
-    function resetAll() { if(confirm("Gesamte Frequenzerhebung löschen?")) location.reload(); }
+    function resetAll() {
+        if (!confirm("Gesamte Frequenzerhebung löschen?")) return;
+
+        data = [{ firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'' }];
+        currentCar = 1;
+        ['trainNumber', 'productID', 'vehicleType', 'fromStation', 'toStation'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        document.querySelectorAll('.suggestions-list').forEach(list => {
+            list.innerHTML = '';
+            list.style.display = 'none';
+        });
+        render();
+    }
 
     async function save() {
         const trainNum = document.getElementById('trainNumber').value;
