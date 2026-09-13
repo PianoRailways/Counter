@@ -50,6 +50,10 @@
         <button class="bnav" onclick="prev()">« Wg -1</button>
         <button class="bnav" onclick="next()">Wg » +1</button>
 
+        <button id="gangwayClosedButton" class="bgangway" style="grid-column: span 2;" onclick="toggleGangway('gangwayClosed')">Übergang geschlossen</button>
+        <button id="frontGangwayClosedButton" class="bgangway" style="grid-column: span 1;" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
+        <button id="rearGangwayClosedButton" class="bgangway" style="grid-column: span 1;" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
+
         <button class="bexp" style="grid-column: span 4; aspect-ratio: auto; height: 40px;" onclick="save()">Speichern</button>
         
         <button class="bwres btn-small" style="grid-column: span 2;" onclick="resetCurrentCar()">Wg. Reset</button>
@@ -61,7 +65,8 @@
     </div>
 
 <script>
-    let data = [{ firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'' }];
+    const emptyCar = () => ({ firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'', gangwayClosed:false, frontGangwayClosed:false, rearGangwayClosed:false });
+    let data = [emptyCar()];
     let currentCar = 1;
 
     let currentFocus = -1;
@@ -144,6 +149,11 @@ document.addEventListener("click", function (e) {
             `A: ${cur.firstClass} | B: ${cur.secondClass} | WR: ${cur.restaurantClass}` + 
             ` | Hunde: ${cur.dogs} | Velos: ${cur.bikes}`;
         document.getElementById('comments').value = cur.comments || '';
+        ['gangwayClosed', 'frontGangwayClosed', 'rearGangwayClosed'].forEach(field => {
+            const button = document.getElementById(field + 'Button');
+            button.classList.toggle('active', Boolean(cur[field]));
+            button.setAttribute('aria-pressed', Boolean(cur[field]));
+        });
     }
 
     function change(f, v) { 
@@ -153,16 +163,20 @@ document.addEventListener("click", function (e) {
 
     function next() { 
         currentCar++; 
-        if(!data[currentCar-1]) data.push({firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:''});
+        if(!data[currentCar-1]) data.push(emptyCar());
         render(); 
     }
 
     function prev() { if(currentCar > 1) { currentCar--; render(); } }
     function updateComment() { data[currentCar-1].comments = document.getElementById('comments').value; }
+    function toggleGangway(field) {
+        data[currentCar-1][field] = !data[currentCar-1][field];
+        render();
+    }
     
     function resetCurrentCar() {
         if(confirm(`Wagen ${currentCar} wirklich auf Null setzen?`)) {
-            data[currentCar-1] = { firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'' };
+            data[currentCar-1] = emptyCar();
             render();
         }
     }
@@ -170,7 +184,7 @@ document.addEventListener("click", function (e) {
     function resetAll() {
         if (!confirm("Gesamte Frequenzerhebung löschen?")) return;
 
-        data = [{ firstClass:0, secondClass:0, restaurantClass:0, dogs:0, bikes:0, comments:'' }];
+        data = [emptyCar()];
         currentCar = 1;
         ['trainNumber', 'productID', 'vehicleType', 'fromStation', 'toStation'].forEach(id => {
             document.getElementById(id).value = '';

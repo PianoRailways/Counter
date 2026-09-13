@@ -52,6 +52,31 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
         .wagon::after { content: ''; position: absolute; right: -17px; top: 50%; width: 15px; height: 4px; background: #666; }
         .wagon:last-child::after { display: none; }
 
+        .gangway-marker {
+            position: absolute;
+            top: 50%;
+            width: 24px;
+            height: 24px;
+            margin-top: -12px;
+            border: 3px solid #d00000;
+            border-radius: 50%;
+            background: #fff;
+            z-index: 2;
+            box-sizing: border-box;
+        }
+        .gangway-marker::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            right: 3px;
+            top: 8px;
+            height: 3px;
+            background: #d00000;
+        }
+        .gangway-marker.front { left: -14px; }
+        .gangway-marker.rear { right: -14px; }
+        .gangway-marker.all { top: 22px; right: 8px; margin-top: 0; }
+
         .wagon-nr { background: #333; color: white; text-align: center; font-size: 11px; padding: 3px 0; font-weight: bold; }
         /* Der class-strip wird jetzt über JavaScript mit einem Gradient gefüllt */
 .class-strip { 
@@ -172,6 +197,9 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
     const a = parseInt(w.pax_a || 0);
     const b = parseInt(w.pax_b || 0);
     const wr = parseInt(w.pax_wr || 0);
+                const gangwayClosed = Number(w.uebergang_geschlossen) === 1;
+                const frontGangwayClosed = Number(w.uebergang_vorne_geschlossen) === 1;
+                const rearGangwayClosed = Number(w.uebergang_hinten_geschlossen) === 1;
 
     // Array für aktive Klassen sammeln
     let activeColors = [];
@@ -199,6 +227,9 @@ if (!isset($adminPassword)) { $adminPassword = "kaunter"; }
     trainHtml += `
         <div class="wagon">
             <div class="wagon-nr">Wagen ${w.wagen_index}</div>
+            ${gangwayClosed ? '<span class="gangway-marker all" title="Wagenübergang geschlossen"></span>' : ''}
+            ${frontGangwayClosed ? '<span class="gangway-marker front" title="Wagenübergang vorne geschlossen"></span>' : ''}
+            ${rearGangwayClosed ? '<span class="gangway-marker rear" title="Wagenübergang hinten geschlossen"></span>' : ''}
             <div class="class-strip" style="${gradientStyle}"></div>
             <div class="wagon-content">
                 <div class="pax-row"><span class="label">1. Kl</span> <b>${a}</b></div>

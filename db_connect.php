@@ -16,6 +16,7 @@ try {
         produkt_id TEXT,
         von_station TEXT,
         bis_station TEXT,
+        fahrzeug_typ TEXT,
         datum TEXT,
         zeit_erfasst DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
@@ -30,8 +31,26 @@ try {
         hunde INTEGER,
         velos INTEGER,
         bemerkung TEXT,
+        uebergang_geschlossen INTEGER NOT NULL DEFAULT 0,
+        uebergang_vorne_geschlossen INTEGER NOT NULL DEFAULT 0,
+        uebergang_hinten_geschlossen INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (fahrt_id) REFERENCES fahrten(id) ON DELETE CASCADE
     )");
+
+    // Bestehende Datenbanken erhalten neue Spalten ebenfalls automatisch.
+    $columns = [
+        'fahrzeug_typ' => 'TEXT',
+        'uebergang_geschlossen' => 'INTEGER NOT NULL DEFAULT 0',
+        'uebergang_vorne_geschlossen' => 'INTEGER NOT NULL DEFAULT 0',
+        'uebergang_hinten_geschlossen' => 'INTEGER NOT NULL DEFAULT 0'
+    ];
+    foreach ($columns as $column => $definition) {
+        $exists = $pdo->query("SELECT 1 FROM pragma_table_info('" . ($column === 'fahrzeug_typ' ? 'fahrten' : 'wagen_daten') . "') WHERE name = " . $pdo->quote($column))->fetchColumn();
+        if (!$exists) {
+            $table = $column === 'fahrzeug_typ' ? 'fahrten' : 'wagen_daten';
+            $pdo->exec("ALTER TABLE $table ADD COLUMN $column $definition");
+        }
+    }
 
 } catch (PDOException $e) {
     header('Content-Type: application/json');

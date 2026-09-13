@@ -35,6 +35,8 @@ if (!isset($adminPassword)) {
         
         .btn-del { background: #f44336; padding: 6px 12px; font-size: 12px; border-radius: 4px; color: white; border: none; cursor: pointer; }
         .btn-del:hover { background: #d32f2f; }
+        .gangway-line { height: 8px; min-width: 70px; background: transparent; }
+        .gangway-line.closed { background: #d00000; }
         .admin-only { display: none; }
     </style>
 </head>
@@ -181,6 +183,7 @@ if (!isset($adminPassword)) {
                                 <th>WR</th>
                                 <th>H</th>
                                 <th>V</th>
+                                <th>Übergang</th>
                                 <th>Bemerkung</th>
                             </tr>
                         </thead>
@@ -188,6 +191,14 @@ if (!isset($adminPassword)) {
             
             // Jeder Wagen bekommt eine eigene Zeile in DERSELBEN Tabelle
             fahrt.wagen.forEach(w => {
+                const gangwayClosed = Number(w.uebergang_geschlossen) === 1;
+                const frontGangwayClosed = Number(w.uebergang_vorne_geschlossen) === 1;
+                const rearGangwayClosed = Number(w.uebergang_hinten_geschlossen) === 1;
+                const gangwayTitle = [
+                    gangwayClosed ? 'Wagenübergang geschlossen' : '',
+                    frontGangwayClosed ? 'vorne geschlossen' : '',
+                    rearGangwayClosed ? 'hinten geschlossen' : ''
+                ].filter(Boolean).join(', ');
                 html += `<tr>
                     <td><b>${w.wagen_index}</b></td>
                     <td>${w.pax_a || 0}</td>
@@ -195,6 +206,7 @@ if (!isset($adminPassword)) {
                     <td>${w.pax_wr || 0}</td>
                     <td>${w.hunde || 0}</td>
                     <td>${w.velos || 0}</td>
+                    <td title="${gangwayTitle}"><div class="gangway-line ${gangwayTitle ? 'closed' : ''}"></div></td>
                     <td style="color:#666; font-size:12px;">${w.bemerkung || '-'}</td>
                 </tr>`;
             });
@@ -215,12 +227,13 @@ if (!isset($adminPassword)) {
             return;
         }
 
-        let csvContent = "\ufeff" + "ID;Zeitpunkt;Produkt;Zugnummer;Fz-Typ;Von;Bis;Wagen;A;B;WR;Hunde;Velos;Bemerkung\r\n";
+        let csvContent = "\ufeff" + "ID;Zeitpunkt;Produkt;Zugnummer;Fz-Typ;Von;Bis;Wagen;A;B;WR;Hunde;Velos;Übergang;Übergang vorne;Übergang hinten;Bemerkung\r\n";
         window.currentData.forEach(row => {
             const line = [
                 row.id, row.datum || row.zeit_erfasst, row.produkt_id, row.zugnummer,
                 row.fahrzeug_typ || "", `"${row.von_station}"`, `"${row.bis_station}"`,
                 row.wagen_index, row.pax_a, row.pax_b, row.pax_wr, row.hunde, row.velos,
+                row.uebergang_geschlossen, row.uebergang_vorne_geschlossen, row.uebergang_hinten_geschlossen,
                 `"${(row.bemerkung || "").replace(/"/g, '""')}"`
             ].join(";");
             csvContent += line + "\r\n";
