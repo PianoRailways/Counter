@@ -7,7 +7,7 @@ body { width: 375px; margin: 0 auto; background: #f0f0f0; padding: 10px; font-fa
 .row { display: flex; gap: 5px; margin-bottom: 5px; align-items: flex-start; }
 input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; flex: 1; min-width: 0; outline: none; }
 
-#display { background: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold; line-height: 1.4; border-left: 5px solid #333; }
+#display { background: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold; line-height: 1.4;}
 
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
 button { aspect-ratio: 1/1; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 20px; cursor: pointer; }
