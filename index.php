@@ -121,7 +121,7 @@
 
         <button class="bwr" onclick="change('restaurantClass', 1)">WR +1</button>
         <button class="bwr" onclick="change('restaurantClass', -1)">WR -1</button>
-        <button class="bdog" onclick="change('dogs', 1)">Hunde +1</button>
+        <button class="bdog" onclick="change('dogs', 1)">Hund +1</button>
         <button class="bdog" onclick="change('dogs', -1)">Hund -1</button>
 
         <button class="bbike" onclick="change('bikes', 1)">Velos +1</button>
