@@ -45,8 +45,8 @@
         <button class="bdog" onclick="change('dogs', 1)">Hund +1</button>
         <button class="bdog" onclick="change('dogs', -1)">Hund -1</button>
 
-        <button class="bbike" onclick="change('bikes', 1)">Velos +1</button>
-        <button class="bbike" onclick="change('bikes', -1)">Velos -1</button>
+        <button class="bbike" onclick="change('bikes', 1)">Velo +1</button>
+        <button class="bbike" onclick="change('bikes', -1)">Velo -1</button>
         <button class="bnav" onclick="prev()">« Wg -1</button>
         <button class="bnav" onclick="next()">Wg » +1</button>
 
