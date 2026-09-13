@@ -193,6 +193,7 @@ document.addEventListener("click", function (e) {
             list.style.display = 'none';
         });
         render();
+        location.reload();
     }
 
     async function save() {
