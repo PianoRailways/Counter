@@ -35,6 +35,27 @@ if (!isset($adminPassword)) {
         
         .btn-del { background: #f44336; padding: 6px 12px; font-size: 12px; border-radius: 4px; color: white; border: none; cursor: pointer; }
         .btn-del:hover { background: #d32f2f; }
+        .gangway-line { height: 8px; min-width: 70px; background: transparent; }
+        .gangway-line.closed { background: #d00000; }
+        .edit-modal[hidden] { display: none; }
+        .edit-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; padding: 15px; z-index: 10; }
+        .edit-dialog { background: white; width: min(100%, 900px); max-height: 90vh; overflow-y: auto; border-radius: 8px; padding: 20px; box-sizing: border-box; }
+        .edit-fields { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
+        .edit-fields label, .edit-car label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: #666; font-weight: bold; }
+        .edit-fields input, .edit-car input[type="number"], .edit-car input[type="text"] { box-sizing: border-box; width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 4px; }
+        .edit-cars { display: grid; gap: 8px; }
+        .edit-car { display: grid; grid-template-columns: 45px repeat(5, 1fr) 1.7fr repeat(3, auto) 70px; gap: 6px; align-items: end; padding: 8px; background: #f6f6f6; border: 1px solid #ddd; border-radius: 4px; }
+        .edit-car .wagon-label { font-weight: bold; padding-bottom: 8px; }
+        .edit-car .check-label { align-items: center; justify-content: center; white-space: nowrap; }
+        .edit-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; }
+        .edit-actions-right { display: flex; gap: 8px; }
+        .btn-cancel { background: #757575; }
+        .btn-edit { background: #ff9800; padding: 6px 12px; font-size: 12px; border-radius: 4px; color: white; border: none; cursor: pointer; }
+        @media (max-width: 700px) {
+            .edit-fields { grid-template-columns: repeat(2, 1fr); }
+            .edit-car { grid-template-columns: 45px repeat(2, 1fr); }
+            .edit-car .comments-field, .edit-car .check-label, .edit-car button { grid-column: span 2; }
+        }
         .admin-only { display: none; }
     </style>
 </head>
@@ -63,6 +84,29 @@ if (!isset($adminPassword)) {
     </div>
 
     <div id="results">Lade Daten...</div>
+</div>
+
+<div id="editModal" class="edit-modal" hidden>
+    <div class="edit-dialog">
+        <h3>Fahrt bearbeiten</h3>
+        <form id="editForm" onsubmit="saveEdit(event)">
+            <div class="edit-fields">
+                <label>Fahrtnummer<input id="editTrainNumber" required></label>
+                <label>Kategorie<input id="editProductID"></label>
+                <label>Fz-Typ<input id="editVehicleType"></label>
+                <label>Von<input id="editFromStation"></label>
+                <label>Bis<input id="editToStation"></label>
+            </div>
+            <div id="editCars" class="edit-cars"></div>
+            <div class="edit-actions">
+                <button type="button" onclick="addEditCar()">Wagen hinzufügen</button>
+                <div class="edit-actions-right">
+                    <button type="button" class="btn-cancel" onclick="closeEdit()">Abbrechen</button>
+                    <button type="submit" style="background:#4caf50;">Speichern</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -108,6 +152,112 @@ if (!isset($adminPassword)) {
             if (result.status === 'success') loadData();
             else alert("Fehler: " + result.message);
         } catch (e) { alert("Serverfehler beim Löschen."); }
+    }
+
+    let editingFahrtId = null;
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>'"]/g, character => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[character]));
+    }
+
+    function renderEditCars(cars) {
+        const container = document.getElementById('editCars');
+        container.innerHTML = '';
+        cars.forEach((car, index) => {
+            container.insertAdjacentHTML('beforeend', `
+                <div class="edit-car">
+                    <div class="wagon-label">Wg ${index + 1}</div>
+                    <label>A<input type="number" min="0" value="${Number(car.pax_a || 0)}" data-field="firstClass"></label>
+                    <label>B<input type="number" min="0" value="${Number(car.pax_b || 0)}" data-field="secondClass"></label>
+                    <label>WR<input type="number" min="0" value="${Number(car.pax_wr || 0)}" data-field="restaurantClass"></label>
+                    <label>Hunde<input type="number" min="0" value="${Number(car.hunde || 0)}" data-field="dogs"></label>
+                    <label>Velos<input type="number" min="0" value="${Number(car.velos || 0)}" data-field="bikes"></label>
+                    <label class="comments-field">Bemerkung<input type="text" value="${escapeHtml(car.bemerkung || '')}" data-field="comments"></label>
+                    <label class="check-label">Vorne<input type="checkbox" data-field="frontGangwayClosed" ${Number(car.uebergang_vorne_geschlossen) === 1 ? 'checked' : ''}></label>
+                    <label class="check-label">Hinten<input type="checkbox" data-field="rearGangwayClosed" ${Number(car.uebergang_hinten_geschlossen) === 1 ? 'checked' : ''}></label>
+                    <button type="button" class="btn-del" onclick="removeEditCar(this)">Entfernen</button>
+                </div>`);
+        });
+    }
+
+    function openEdit(id) {
+        if (!isAdmin) return;
+        const rows = window.currentData.filter(row => Number(row.fahrt_id) === Number(id));
+        if (rows.length === 0) return;
+        const info = rows[0];
+        editingFahrtId = id;
+        document.getElementById('editTrainNumber').value = info.zugnummer || '';
+        document.getElementById('editProductID').value = info.produkt_id || '';
+        document.getElementById('editVehicleType').value = info.fahrzeug_typ || '';
+        document.getElementById('editFromStation').value = info.von_station || '';
+        document.getElementById('editToStation').value = info.bis_station || '';
+        renderEditCars(rows.sort((a, b) => a.wagen_index - b.wagen_index));
+        document.getElementById('editModal').hidden = false;
+    }
+
+    function addEditCar() {
+        const cars = Array.from(document.querySelectorAll('.edit-car')).map(row => ({
+            pax_a: row.querySelector('[data-field="firstClass"]').value,
+            pax_b: row.querySelector('[data-field="secondClass"]').value,
+            pax_wr: row.querySelector('[data-field="restaurantClass"]').value,
+            hunde: row.querySelector('[data-field="dogs"]').value,
+            velos: row.querySelector('[data-field="bikes"]').value,
+            bemerkung: row.querySelector('[data-field="comments"]').value,
+            uebergang_vorne_geschlossen: row.querySelector('[data-field="frontGangwayClosed"]').checked ? 1 : 0,
+            uebergang_hinten_geschlossen: row.querySelector('[data-field="rearGangwayClosed"]').checked ? 1 : 0
+        }));
+        cars.push({});
+        renderEditCars(cars);
+    }
+
+    function removeEditCar(button) {
+        button.closest('.edit-car').remove();
+        document.querySelectorAll('#editCars .wagon-label').forEach((label, index) => label.textContent = `Wg ${index + 1}`);
+    }
+
+    function closeEdit() {
+        document.getElementById('editModal').hidden = true;
+        editingFahrtId = null;
+    }
+
+    async function saveEdit(event) {
+        event.preventDefault();
+        const cars = Array.from(document.querySelectorAll('.edit-car')).map(row => {
+            const value = field => row.querySelector(`[data-field="${field}"]`);
+            return {
+                firstClass: value('firstClass').value,
+                secondClass: value('secondClass').value,
+                restaurantClass: value('restaurantClass').value,
+                dogs: value('dogs').value,
+                bikes: value('bikes').value,
+                comments: value('comments').value,
+                frontGangwayClosed: value('frontGangwayClosed').checked,
+                rearGangwayClosed: value('rearGangwayClosed').checked
+            };
+        });
+        const payload = {
+            trainNumber: document.getElementById('editTrainNumber').value,
+            productID: document.getElementById('editProductID').value,
+            vehicleType: document.getElementById('editVehicleType').value,
+            fromStation: document.getElementById('editFromStation').value,
+            toStation: document.getElementById('editToStation').value,
+            cars
+        };
+        try {
+            const response = await fetch(`api_admin.php?pw=${encodeURIComponent(eingegebenesPw)}&action=update&id=${editingFahrtId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.status !== 'success') throw new Error(result.message || 'Speichern fehlgeschlagen');
+            closeEdit();
+            loadData();
+        } catch (error) {
+            alert('Fehler beim Bearbeiten: ' + error.message);
+        }
     }
 
     async function loadData() {
@@ -169,6 +319,7 @@ if (!isset($adminPassword)) {
                             </div>
                         </div>
                         <div class="admin-only" style="${isAdmin ? 'display:block' : 'display:none'}">
+                            <button class="btn-edit" onclick="openEdit(${fId})">Bearbeiten</button>
                             <button class="btn-del" onclick="deleteEntry(${fId})">Löschen</button>
                         </div>
                     </div>
@@ -181,6 +332,7 @@ if (!isset($adminPassword)) {
                                 <th>WR</th>
                                 <th>H</th>
                                 <th>V</th>
+                                <th>Übergang</th>
                                 <th>Bemerkung</th>
                             </tr>
                         </thead>
@@ -188,6 +340,12 @@ if (!isset($adminPassword)) {
             
             // Jeder Wagen bekommt eine eigene Zeile in DERSELBEN Tabelle
             fahrt.wagen.forEach(w => {
+                const frontGangwayClosed = Number(w.uebergang_vorne_geschlossen) === 1;
+                const rearGangwayClosed = Number(w.uebergang_hinten_geschlossen) === 1;
+                const gangwayTitle = [
+                    frontGangwayClosed ? 'vorne geschlossen' : '',
+                    rearGangwayClosed ? 'hinten geschlossen' : ''
+                ].filter(Boolean).join(', ');
                 html += `<tr>
                     <td><b>${w.wagen_index}</b></td>
                     <td>${w.pax_a || 0}</td>
@@ -195,6 +353,7 @@ if (!isset($adminPassword)) {
                     <td>${w.pax_wr || 0}</td>
                     <td>${w.hunde || 0}</td>
                     <td>${w.velos || 0}</td>
+                    <td title="${gangwayTitle}"><div class="gangway-line ${gangwayTitle ? 'closed' : ''}"></div></td>
                     <td style="color:#666; font-size:12px;">${w.bemerkung || '-'}</td>
                 </tr>`;
             });
@@ -215,12 +374,13 @@ if (!isset($adminPassword)) {
             return;
         }
 
-        let csvContent = "\ufeff" + "ID;Zeitpunkt;Produkt;Zugnummer;Fz-Typ;Von;Bis;Wagen;A;B;WR;Hunde;Velos;Bemerkung\r\n";
+        let csvContent = "\ufeff" + "ID;Zeitpunkt;Produkt;Zugnummer;Fz-Typ;Von;Bis;Wagen;A;B;WR;Hunde;Velos;Übergang vorne;Übergang hinten;Bemerkung\r\n";
         window.currentData.forEach(row => {
             const line = [
                 row.id, row.datum || row.zeit_erfasst, row.produkt_id, row.zugnummer,
                 row.fahrzeug_typ || "", `"${row.von_station}"`, `"${row.bis_station}"`,
                 row.wagen_index, row.pax_a, row.pax_b, row.pax_wr, row.hunde, row.velos,
+                row.uebergang_vorne_geschlossen, row.uebergang_hinten_geschlossen,
                 `"${(row.bemerkung || "").replace(/"/g, '""')}"`
             ].join(";");
             csvContent += line + "\r\n";
