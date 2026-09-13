@@ -1,0 +1,78 @@
+:root {
+	--c1: #ffeb3b; --c2: #ff8a80; --wr: #e040fb;
+	--dog: #4caf50; --bike: #2196f3; --nav: #8bc34a;
+	--exp: #212121; --res: #f44336; --wres: #fb8c00;
+}
+body { width: 375px; margin: 0 auto; background: #f0f0f0; padding: 10px; font-family: sans-serif; }
+.row { display: flex; gap: 5px; margin-bottom: 5px; align-items: flex-start; }
+input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; flex: 1; min-width: 0; outline: none; }
+
+#display { background: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold; line-height: 1.4; border-left: 5px solid #333; }
+
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+button { aspect-ratio: 1/1; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 20px; cursor: pointer; }
+button:active { opacity: 0.6; }
+
+.b1 { background: var(--c1); color: #000; }
+.b2 { background: var(--c2); }
+.bwr { background: var(--wr); }
+.bdog { background: var(--dog); font-size: 15px; }
+.bbike { background: var(--bike); }
+.bnav { background: var(--nav); }
+.bexp { background: var(--exp); }
+
+.btn-small { aspect-ratio: auto; height: 40px; font-size: 15px; }
+.bwres { background: var(--wres); }
+.bres { background: var(--res); }
+
+/* Custom Suggestions Container */
+.suggestions-container {
+	flex: 1;
+	position: relative;
+	min-width: 0;;
+}
+
+
+/* Die Inputs innerhalb der Container nutzen 100% der Containerbreite */
+.suggestions-container input {
+	width: 100%;
+	box-sizing: border-box; /* Wichtig, damit Padding den Input nicht sprengt */
+	padding: 10px;
+	font-size: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	outline: none;
+}
+
+.suggestions-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	background: white;
+	border: 1px solid #ccc;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	z-index: 1000;
+	max-height: 250px;
+	overflow-y: auto;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+	display: none;
+}
+
+.suggestion-item {
+	padding: 10px;
+	cursor: pointer;
+	font-size: 14px;
+	border-bottom: 1px solid #eee;
+	display: flex;
+	justify-content: space-between;
+}
+
+.suggestion-item:last-child { border-bottom: none; }
+
+.suggestion-item:hover, .suggestion-item.active {
+	background-color: #e3f2fd;
+}
+
+.suggestion-item b { color: #1565c0; }
