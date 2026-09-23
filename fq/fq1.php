@@ -256,12 +256,8 @@
             return Object.fromEntries(countKeys.map(key => [key, 0]));
         }
 
-        let currentWagen = 1;
-        let wagen = {
-            1: { klasse: '2', abteilung: '↓', counts: createEmptyCounts() },
-            2: { klasse: '2', abteilung: '—', counts: createEmptyCounts() },
-            3: { klasse: '1', abteilung: '↑', counts: createEmptyCounts() }
-        };
+        let currentWagen = null;
+        let wagen = {};
 
         const abteilungElement = document.getElementById('abteilung');
         const wagenSliderElement = document.querySelector('.wagen-slider');
@@ -422,15 +418,22 @@
         }
 
         function syncCountValuesToWagen() {
+            if (currentWagen === null || !wagen[currentWagen]) return;
             wagen[currentWagen].counts = { ...countValues };
         }
 
         function loadCountValuesForWagen() {
+            if (currentWagen === null || !wagen[currentWagen]) {
+                Object.assign(countValues, createEmptyCounts());
+                renderCountValues();
+                return;
+            }
             Object.assign(countValues, createEmptyCounts(), wagen[currentWagen].counts || {});
             renderCountValues();
         }
 
         function openCountPanel(key) {
+            if (currentWagen === null) return;
             activeCountKey = key;
             countPanelTitleElement.textContent = key;
             countPanelValueElement.textContent = countValues[key];
@@ -488,10 +491,9 @@
         renderCountValues();
 
         function updateDisplay() {
-            const w = wagen[currentWagen];
-            let abtText = '↓';
-            if (w.abteilung === '↑') abtText = '↑';
-            else if (w.abteilung === '—') abtText = '–';
+            const w = currentWagen === null ? null : wagen[currentWagen];
+            let abtText = w?.abteilung || '';
+            if (abtText === '—') abtText = '–';
             abteilungElement.textContent = abtText;
             renderWagenButtons();
         }
@@ -588,6 +590,7 @@
         }
 
         document.getElementById('wagen-prev').addEventListener('click', () => {
+            if (currentWagen === null) return;
             const wagenNummern = Object.keys(wagen).map(Number).sort((a, b) => a - b);
             const aktuellerIndex = wagenNummern.indexOf(currentWagen);
             if (aktuellerIndex > 0) {
@@ -599,7 +602,7 @@
         });
 
         document.getElementById('wagen-next').addEventListener('click', () => {
-            const nextWagen = currentWagen + 1;
+            const nextWagen = currentWagen === null ? 1 : currentWagen + 1;
             if (!wagen[nextWagen]) {
                 wagen[nextWagen] = { klasse: '?', abteilung: '—', remarque: '', counts: createEmptyCounts() };
             }
@@ -607,6 +610,7 @@
             currentWagen = nextWagen;
             loadCountValuesForWagen();
             updateDisplay();
+            openModal('wagenklasse-modal');
         });
 
         abteilungElement.addEventListener('click', () => {
@@ -617,6 +621,7 @@
         const remarqueWagenNumberElement = document.getElementById('remarque-wagen-number');
 
         document.getElementById('remarque-button').addEventListener('click', () => {
+            if (currentWagen === null) return;
             remarqueWagenNumberElement.textContent = currentWagen;
             remarqueInputElement.value = wagen[currentWagen].remarque || '';
             openModal('remarque-modal');
@@ -624,6 +629,7 @@
         });
 
         document.getElementById('remarque-save').addEventListener('click', () => {
+            if (currentWagen === null) return;
             wagen[currentWagen].remarque = remarqueInputElement.value.trim();
             closeModal('remarque-modal');
         });
@@ -753,6 +759,7 @@
         document.querySelectorAll('#wagenklasse-modal .modal-option').forEach(opt => {
             if (opt.id === 'wagen-delete') return;
             opt.addEventListener('click', () => {
+                if (currentWagen === null) return;
                 wagen[currentWagen].klasse = opt.dataset.value;
                 updateDisplay();
                 closeModal('wagenklasse-modal');
@@ -760,6 +767,7 @@
         });
 
         document.getElementById('wagen-delete').addEventListener('click', () => {
+            if (currentWagen === null) return;
             const wagenNummern = Object.keys(wagen).map(Number).sort((a, b) => a - b);
             if (wagenNummern.length === 1) return;
 
@@ -773,6 +781,7 @@
         // Abteilung Modal Options
         document.querySelectorAll('#abteilung-modal .modal-option').forEach(opt => {
             opt.addEventListener('click', () => {
+                if (currentWagen === null) return;
                 wagen[currentWagen].abteilung = opt.dataset.value;
                 updateDisplay();
                 closeModal('abteilung-modal');
