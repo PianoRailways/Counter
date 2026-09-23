@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FQ Panel</title>
+    <script src="didokmappingcounter.js"></script>
     <link rel="stylesheet" type="text/css" href="fq1.css">
 </head>
 <body>
@@ -17,32 +18,37 @@
             <button class="nav-btn add-btn" id="wagen-next" aria-label="Neuen Wagen hinzufügen">＋</button>
         </div>
 
-        <!-- Section Bar -->
-        <div class="section-bar">
-            <table>
-                <tr>
-                    <td>EBG</td>
-                    <td>TestTesttest</td>
-                    <td>12345</td>
-                </tr>
-                <tr>
-                    <td>LB</td>
-                    <td>LB</td>
-                    <td>65322</td>
-                </tr>
-            </table>
-        </div>
-
         <!-- Data Display -->
         <div class="data-display">
-            <div class="data-field">48099</div>
-            <div class="data-field small" style="font-size: 10px;">□</div>
-            <div class="data-field">65322</div>
+            <label class="data-field input-field">
+                <span></span>
+                <input id="fahrtnummer" type="text" inputmode="none" readonly value="2368">
+            </label>
+            <button class="data-field input-field select-field" id="kategorie" type="button">
+                <span></span>
+                <strong>□</strong>
+            </button>
+            <label class="data-field input-field">
+                <span></span>
+                <input id="fahrtzeugtyp" type="text" readonly value="EW4">
+            </label>
         </div>
         <div class="data-display">
-            <div class="data-field">in</div>
-            <div class="data-field small">RK</div>
-            <div class="data-field">65399 out</div>
+            <div class="station-field">
+                <label class="data-field input-field">
+                    <span></span>
+                    <input id="in-station" type="text" autocomplete="off" placeholder="Startbahnhof">
+                </label>
+                <div class="station-suggestions" id="in-suggestions"></div>
+            </div>
+            <button class="data-field function-field" type="button">Ausl.</button>
+            <div class="station-field">
+                <label class="data-field input-field">
+                    <span></span>
+                    <input id="out-station" type="text" autocomplete="off" placeholder="Endbahnhof">
+                </label>
+                <div class="station-suggestions" id="out-suggestions"></div>
+            </div>
         </div>
 
         <!-- Button Row -->
@@ -86,25 +92,48 @@
 
         <!-- Keyboard -->
         <div class="keyboard">
-            <button class="key">1</button>
-            <button class="key">2</button>
-            <button class="key">3</button>
+            <button class="key number-key">1</button>
+            <button class="key number-key">2</button>
+            <button class="key number-key">3</button>
             <button class="key" style="grid-row: 1; grid-column: 4; grid-row-end: 3;">⊡</button>
             
-            <button class="key">4</button>
-            <button class="key">5</button>
-            <button class="key">6</button>
+            <button class="key number-key">4</button>
+            <button class="key number-key">5</button>
+            <button class="key number-key">6</button>
             
-            <button class="key">7</button>
-            <button class="key">8</button>
-            <button class="key">9</button>
+            <button class="key number-key">7</button>
+            <button class="key number-key">8</button>
+            <button class="key number-key">9</button>
             <button class="key" style="grid-row: 4; grid-column: 4;">Weiter</button>
             
-            <button class="key">abc</button>
-            <button class="key">0</button>
+            <button class="key" id="vehicle-keyboard">abc</button>
+            <button class="key number-key">0</button>
             <button class="key function">Hafas-Zuglauf</button>
             
             <button class="key function" style="grid-column: 1 / 5; margin-top: 8px;">Enter</button>
+        </div>
+    </div>
+
+    <!-- Kategorie-Auswahl -->
+    <div class="modal-overlay" id="kategorie-modal">
+        <div class="modal category-modal">
+            <div class="modal-title">Kategorie</div>
+            <div class="category-options" id="category-options"></div>
+            <div class="modal-close">
+                <button onclick="closeModal('kategorie-modal')">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eigene Tastatur fuer den Fahrtzeugtyp -->
+    <div class="modal-overlay" id="vehicle-keyboard-modal">
+        <div class="modal vehicle-modal">
+            <div class="modal-title">Fahrtzeugtyp</div>
+            <input class="vehicle-input" id="vehicle-modal-input" type="text" autocomplete="off">
+            <div class="vehicle-keys" id="vehicle-keys"></div>
+            <div class="modal-close">
+                <button id="vehicle-keyboard-done">Übernehmen</button>
+            </div>
         </div>
     </div>
 
@@ -152,10 +181,124 @@
         const abteilungElement = document.getElementById('abteilung');
         const wagenSliderElement = document.querySelector('.wagen-slider');
         const wagenTrackElement = document.getElementById('wagen-track');
+        const fahrtnummerElement = document.getElementById('fahrtnummer');
+        const kategorieElement = document.getElementById('kategorie');
+        const fahrtzeugtypElement = document.getElementById('fahrtzeugtyp');
         let dragStartX = 0;
         let dragStartScrollLeft = 0;
         let isDraggingWagenSlider = false;
         let suppressWagenClick = false;
+
+        const kategorien = ['S', 'IR', 'R', 'RE', 'IC', 'ICE', 'EC', 'EN', 'NJ', 'SN', 'RN', 'REG', 'CC', 'FUN', 'B', 'T', 'NFT', 'NFB', 'BAT', 'WB', 'ICN', 'TGV', 'RJX', 'TER', 'CNL', 'LIX', 'LEX', 'PE', 'PEX', 'GPX', 'GEX', 'BEX', 'EV', 'SEV', 'BE', 'EST', 'ELZ', 'U', 'MAT', 'UUU', 'BUS'];
+
+        function initializeDataInputs() {
+            const categoryOptions = document.getElementById('category-options');
+            kategorien.forEach(kategorie => {
+                const option = document.createElement('button');
+                option.className = 'category-option';
+                option.type = 'button';
+                option.textContent = kategorie;
+                option.addEventListener('click', () => {
+                    kategorieElement.querySelector('strong').textContent = kategorie;
+                    closeModal('kategorie-modal');
+                });
+                categoryOptions.appendChild(option);
+            });
+
+            kategorieElement.addEventListener('click', () => openModal('kategorie-modal'));
+
+            fahrtnummerElement.addEventListener('focus', () => {
+                fahrtnummerElement.classList.add('active-input');
+            });
+
+            document.querySelectorAll('.number-key').forEach(key => {
+                key.addEventListener('click', () => {
+                    if (document.activeElement !== fahrtnummerElement) {
+                        fahrtnummerElement.focus();
+                    }
+                    fahrtnummerElement.value += key.textContent;
+                });
+            });
+
+            document.querySelector('.keyboard .key:nth-child(4)').addEventListener('click', () => {
+                fahrtnummerElement.value = fahrtnummerElement.value.slice(0, -1);
+            });
+
+            document.getElementById('vehicle-keyboard').addEventListener('click', () => {
+                document.getElementById('vehicle-modal-input').value = fahrtzeugtypElement.value;
+                openModal('vehicle-keyboard-modal');
+            });
+
+            const vehicleKeys = document.getElementById('vehicle-keys');
+            [...'1234567890QWERTZUIOPASDFGHJKLYXCVBNM'].forEach(zeichen => {
+                const key = document.createElement('button');
+                key.type = 'button';
+                key.className = 'vehicle-key';
+                key.textContent = zeichen;
+                key.addEventListener('click', () => {
+                    document.getElementById('vehicle-modal-input').value += zeichen;
+                });
+                vehicleKeys.appendChild(key);
+            });
+
+            const backspace = document.createElement('button');
+            backspace.type = 'button';
+            backspace.className = 'vehicle-key wide';
+            backspace.textContent = '←';
+            backspace.addEventListener('click', () => {
+                const input = document.getElementById('vehicle-modal-input');
+                input.value = input.value.slice(0, -1);
+            });
+            vehicleKeys.appendChild(backspace);
+
+            document.getElementById('vehicle-keyboard-done').addEventListener('click', () => {
+                fahrtzeugtypElement.value = document.getElementById('vehicle-modal-input').value;
+                closeModal('vehicle-keyboard-modal');
+            });
+
+            document.querySelectorAll('.station-field input').forEach(input => {
+                input.addEventListener('input', () => updateStationSuggestions(input));
+                input.addEventListener('focus', () => updateStationSuggestions(input));
+            });
+        }
+
+        function updateStationSuggestions(input) {
+            const query = input.value.trim().toUpperCase();
+            const list = document.getElementById(input.id === 'in-station' ? 'in-suggestions' : 'out-suggestions');
+            list.replaceChildren();
+            if (!query || !window.didokMapping) {
+                list.classList.remove('visible');
+                return;
+            }
+
+            const shortDidokId = /^\d+$/.test(query) ? '850' + query : '';
+            const suggestions = Object.entries(window.didokMapping)
+                .map(([id, name]) => ({ id: String(id).toUpperCase(), name: String(name) }))
+                .filter(entry => entry.id.includes(query) || entry.name.toUpperCase().includes(query))
+                .sort((a, b) => {
+                    const aShortId = a.id === shortDidokId;
+                    const bShortId = b.id === shortDidokId;
+                    const aExact = a.id === query || a.name.toUpperCase() === query;
+                    const bExact = b.id === query || b.name.toUpperCase() === query;
+                    if (aShortId !== bShortId) return aShortId ? -1 : 1;
+                    if (aExact !== bExact) return aExact ? -1 : 1;
+                    return a.name.localeCompare(b.name);
+                })
+                .filter((entry, index, entries) => entries.findIndex(item => item.name === entry.name) === index);
+
+            suggestions.slice(0, 12).forEach(suggestion => {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'station-suggestion';
+                option.innerHTML = '<span>' + suggestion.name + '</span><strong>' + suggestion.id + '</strong>';
+                option.addEventListener('click', () => {
+                    input.value = suggestion.name;
+                    list.classList.remove('visible');
+                });
+                list.appendChild(option);
+            });
+            list.classList.toggle('visible', suggestions.length > 0);
+        }
 
         function updateDisplay() {
             const w = wagen[currentWagen];
@@ -319,6 +462,7 @@
             });
         });
 
+        initializeDataInputs();
         updateDisplay();
     </script>
 </body>
