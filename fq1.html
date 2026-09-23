@@ -187,7 +187,8 @@
         let dragStartX = 0;
         let dragStartScrollLeft = 0;
         let isDraggingWagenSlider = false;
-        let suppressWagenClick = false;
+        let isPointerDownWagenSlider = false;
+        let suppressWagenClickUntil = 0;
 
         const kategorien = ['S', 'IR', 'R', 'RE', 'IC', 'ICE', 'EC', 'EN', 'NJ', 'SN', 'RN', 'REG', 'CC', 'FUN', 'B', 'T', 'NFT', 'NFB', 'BAT', 'WB', 'ICN', 'TGV', 'RJX', 'TER', 'CNL', 'LIX', 'LEX', 'PE', 'PEX', 'GPX', 'GEX', 'BEX', 'EV', 'SEV', 'BE', 'EST', 'ELZ', 'U', 'MAT', 'UUU', 'BUS'];
 
@@ -325,8 +326,7 @@
                 }
 
                 wagenButton.addEventListener('click', () => {
-                    if (suppressWagenClick) {
-                        suppressWagenClick = false;
+                    if (Date.now() < suppressWagenClickUntil) {
                         return;
                     }
                     if (wagenNummer === currentWagen) {
@@ -348,11 +348,11 @@
             dragStartX = event.clientX;
             dragStartScrollLeft = wagenSliderElement.scrollLeft;
             isDraggingWagenSlider = false;
-            wagenSliderElement.setPointerCapture(event.pointerId);
+            isPointerDownWagenSlider = true;
         });
 
         wagenSliderElement.addEventListener('pointermove', event => {
-            if (!wagenSliderElement.hasPointerCapture(event.pointerId)) return;
+            if (!isPointerDownWagenSlider || !event.isPrimary) return;
 
             const distance = event.clientX - dragStartX;
             if (Math.abs(distance) > 4) {
@@ -363,18 +363,16 @@
         });
 
         wagenSliderElement.addEventListener('pointerup', event => {
-            if (!wagenSliderElement.hasPointerCapture(event.pointerId)) return;
-            wagenSliderElement.releasePointerCapture(event.pointerId);
             if (isDraggingWagenSlider) {
-                suppressWagenClick = true;
+                suppressWagenClickUntil = Date.now() + 300;
             }
+            isPointerDownWagenSlider = false;
             isDraggingWagenSlider = false;
         });
 
         wagenSliderElement.addEventListener('pointercancel', event => {
-            if (wagenSliderElement.hasPointerCapture(event.pointerId)) {
-                wagenSliderElement.releasePointerCapture(event.pointerId);
-            }
+            isPointerDownWagenSlider = false;
+            suppressWagenClickUntil = 0;
             isDraggingWagenSlider = false;
         });
 
