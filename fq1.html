@@ -99,8 +99,8 @@
         <div class="button-row">
             <button class="button-small">1./2.</button>
             <button class="button-small">Ausl</button>
-            <button class="button-small">Remarque</button>
-            <button class="button-small">Ansch</button>
+            <button class="button-small" id="remarque-button">Remarque</button>
+            <button class="button-small"></button>
         </div>
 
         <!-- Grid Section -->
@@ -224,6 +224,18 @@
             <div class="modal-option" data-value="—">— Einstöckig</div>
             <div class="modal-close">
                 <button onclick="closeModal('abteilung-modal')">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bemerkung fuer den aktuell ausgewaehlten Wagen -->
+    <div class="modal-overlay" id="remarque-modal">
+        <div class="modal remarque-modal">
+            <div class="modal-title">Hinweistext für Wagen <span id="remarque-wagen-number"></span></div>
+            <textarea id="remarque-input" rows="5" maxlength="500" placeholder="Hinweis eingeben"></textarea>
+            <div class="modal-close">
+                <button type="button" id="remarque-cancel">Abbrechen</button>
+                <button type="button" id="remarque-save">Übernehmen</button>
             </div>
         </div>
     </div>
@@ -552,7 +564,7 @@
         document.getElementById('wagen-next').addEventListener('click', () => {
             const nextWagen = currentWagen + 1;
             if (!wagen[nextWagen]) {
-                wagen[nextWagen] = { klasse: '?', abteilung: '—' };
+                wagen[nextWagen] = { klasse: '?', abteilung: '—', remarque: '' };
             }
             currentWagen = nextWagen;
             updateDisplay();
@@ -560,6 +572,25 @@
 
         abteilungElement.addEventListener('click', () => {
             openModal('abteilung-modal');
+        });
+
+        const remarqueInputElement = document.getElementById('remarque-input');
+        const remarqueWagenNumberElement = document.getElementById('remarque-wagen-number');
+
+        document.getElementById('remarque-button').addEventListener('click', () => {
+            remarqueWagenNumberElement.textContent = currentWagen;
+            remarqueInputElement.value = wagen[currentWagen].remarque || '';
+            openModal('remarque-modal');
+            remarqueInputElement.focus();
+        });
+
+        document.getElementById('remarque-save').addEventListener('click', () => {
+            wagen[currentWagen].remarque = remarqueInputElement.value.trim();
+            closeModal('remarque-modal');
+        });
+
+        document.getElementById('remarque-cancel').addEventListener('click', () => {
+            closeModal('remarque-modal');
         });
 
         // Wagenklasse Modal Options

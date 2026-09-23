@@ -577,6 +577,27 @@ body {
     max-width: 300px;
 }
 
+.remarque-modal {
+    width: min(320px, calc(100vw - 32px));
+}
+
+#remarque-input {
+    display: block;
+    width: 100%;
+    min-height: 110px;
+    margin-top: 12px;
+    padding: 8px;
+    border: 1px solid #999;
+    resize: vertical;
+    font: inherit;
+}
+
+.remarque-modal .modal-close {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
 .category-modal {
     width: min(320px, calc(100vw - 32px));
 }
