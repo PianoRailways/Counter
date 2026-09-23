@@ -4,7 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FQ Panel</title>
-    <script src="didokmappingcounter.js"></script>
+        <script>
+            const abbrevMap = {};
+            const nameToAbbrevMap = {};
+            window.didokMapping = {};
+
+            async function loadAbbreviations() {
+                const countries = ['custom', 'ch', 'de', 'at', 'fr', 'uk', 'libero'];
+
+                for (const country of countries) {
+                    try {
+                        const response = await fetch(`/didok/${country}.json`);
+                        if (!response.ok) continue;
+
+                        const data = await response.json();
+                        const countryCode = country.toUpperCase();
+
+                        Object.entries(data).forEach(([abbrev, name]) => {
+                            if (typeof name !== 'string') return;
+
+                            if (!abbrevMap[abbrev]) abbrevMap[abbrev] = [];
+                            abbrevMap[abbrev].push({ name, country: countryCode });
+                            window.didokMapping[abbrev] = name;
+
+                            const normName = name.trim().toLowerCase();
+                            if (!nameToAbbrevMap[normName]) nameToAbbrevMap[normName] = [];
+                            nameToAbbrevMap[normName].push({ abbrev, country: countryCode });
+                        });
+                    } catch (error) {
+                        console.warn(`Konnte /didok/${country}.json nicht laden:`, error);
+                    }
+                }
+
+                window.abbrevMap = abbrevMap;
+                window.nameToAbbrevMap = nameToAbbrevMap;
+                window.dispatchEvent(new Event('didokmappingready'));
+                console.log('Abkürzungs-Mappings geladen:', Object.keys(abbrevMap).length, 'Abkürzungen');
+            }
+
+            function getAbbrevsForName(stationName) {
+                if (!stationName) return [];
+                return nameToAbbrevMap[stationName.trim().toLowerCase()] || [];
+            }
+
+            loadAbbreviations();
+        </script>
     <link rel="stylesheet" type="text/css" href="fq1.css">
 </head>
 <body>
@@ -274,8 +318,12 @@
             }
 
             const shortDidokId = /^\d+$/.test(query) ? '850' + query : '';
-            const suggestions = Object.entries(window.didokMapping)
-                .map(([id, name]) => ({ id: String(id).toUpperCase(), name: String(name) }))
+                const suggestions = Object.entries(window.abbrevMap || {})
+                    .flatMap(([id, entries]) => entries.map(entry => ({
+                        id: String(id).toUpperCase(),
+                        name: String(entry.name),
+                        country: entry.country
+                    })))
                 .filter(entry => entry.id.includes(query) || entry.name.toUpperCase().includes(query))
                 .sort((a, b) => {
                     const aShortId = a.id === shortDidokId;
@@ -286,7 +334,9 @@
                     if (aExact !== bExact) return aExact ? -1 : 1;
                     return a.name.localeCompare(b.name);
                 })
-                .filter((entry, index, entries) => entries.findIndex(item => item.name === entry.name) === index);
+                .filter((entry, index, entries) => entries.findIndex(item =>
+                    item.name === entry.name && item.id === entry.id && item.country === entry.country
+                ) === index);
 
             suggestions.slice(0, 12).forEach(suggestion => {
                 const option = document.createElement('button');
