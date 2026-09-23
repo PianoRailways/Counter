@@ -66,7 +66,7 @@
         <div class="data-display">
             <label class="data-field input-field">
                 <span></span>
-                <input id="fahrtnummer" type="text" inputmode="none" readonly value="2368">
+                <input id="fahrtnummer" type="text" inputmode="none" readonly placeholder="Fahrtnummer">
             </label>
             <button class="data-field input-field select-field" id="kategorie" type="button">
                 <span></span>
@@ -74,7 +74,7 @@
             </button>
             <label class="data-field input-field">
                 <span></span>
-                <input id="fahrtzeugtyp" type="text" value="EW4">
+                <input id="fahrtzeugtyp" type="text" placeholder="Fahrzeugtyp">
             </label>
         </div>
         <div class="data-display">
@@ -660,6 +660,11 @@
         }
 
         saveButtonElement.addEventListener('click', async () => {
+            if (!fahrtnummerElement.value.trim()) {
+                alert('Bitte zuerst eine Fahrtnummer eingeben.');
+                fahrtnummerElement.focus();
+                return;
+            }
             saveButtonElement.disabled = true;
             try {
                 const response = await fetch('fq_save.php', {
