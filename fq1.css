@@ -23,7 +23,7 @@ body {
 
 .panel-header {
     display: grid;
-    grid-template-columns: 1fr auto auto 1fr;
+    grid-template-columns: 1fr 40px 56px 40px 1fr;
     gap: 8px;
     padding: 8px;
     background: #f0f0f0;
@@ -59,10 +59,51 @@ body {
     color: #333;
 }
 
+.header-field.klasse-2 {
+    background: red;
+}
+
+.header-field.klasse-1 {
+    background: yellow;
+}
+
+.header-field.klasse-12 {
+    background: #ffb347;
+}
+
+.header-field.klasse-wr {
+    background: violet;
+}
+.header-field.klasse-fw {
+    background: blue;
+}
+
+.header-field.klasse-wl {
+    background: #8ecae6;
+}
+
+.header-field.klasse-lok {
+    background: black;
+}
+
+.header-field.klasse-d {
+    background: #c9daf8;
+}
+
+.header-field.klasse-cc {
+    background: #d9d2e9;
+}
+
+.header-field.klasse-unbekannt {
+    background: white;
+}
+
 .nav-btn {
+    width: 40px;
+    height: 36px;
     background: white;
     border: 2px solid #333;
-    padding: 8px 12px;
+    padding: 0;
     cursor: pointer;
     font-weight: bold;
     font-size: 14px;
@@ -331,6 +372,16 @@ body {
 
 .modal-option:active {
     background: #d0d0d0;
+}
+
+.modal-option.delete-option {
+    background: #f4cccc;
+    border-color: #cc0000;
+    color: #990000;
+}
+
+.modal-option.delete-option:hover {
+    background: #ea9999;
 }
 
 .modal-close {

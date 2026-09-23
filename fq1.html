@@ -12,7 +12,7 @@
         <div class="panel-header">
             <div></div>
             <button class="nav-btn" id="wagen-prev">◀</button>
-            <div id="wagenklasse" class="header-field highlight">2</div>
+            <div id="wagenklasse" class="header-field klasse-2">2</div>
             <button class="nav-btn" id="wagen-next">▶</button>
         </div>
 
@@ -115,8 +115,12 @@
             <div class="modal-option" data-value="1">1. Klasse (1)</div>
             <div class="modal-option" data-value="12">1. und 2. Klasse (12)</div>
             <div class="modal-option" data-value="WR">Restaurant (WR)</div>
+            <div class="modal-option" data-value="FW">Familienwagen (FW)</div>
             <div class="modal-option" data-value="WL">Schlafwagen (WL)</div>
-            <div class="modal-option" data-value="FW">Spielwagen/Familienwagen (FW)</div>
+            <div class="modal-option" data-value="Lok">Lokomotive (Lok)</div>
+            <div class="modal-option" data-value="D">Dienstwagen (D)</div>
+            <div class="modal-option" data-value="CC">CC (CC)</div>
+            <div class="modal-option delete-option" id="wagen-delete">Wagen löschen</div>
             <div class="modal-close">
                 <button onclick="closeModal('wagenklasse-modal')">Abbrechen</button>
             </div>
@@ -152,11 +156,27 @@
         function updateDisplay() {
             const w = wagen[currentWagen];
             wagenklasseElement.textContent = w.klasse;
+            wagenklasseElement.className = 'header-field ' + getKlasseClass(w.klasse);
             
             let abtText = 'Abt.2.';
             if (w.abteilung === '↑') abtText = 'Abt.1.';
             else if (w.abteilung === '—') abtText = 'Einstöckig';
             abteilungElement.textContent = abtText;
+        }
+
+        function getKlasseClass(klasse) {
+            const classNames = {
+                '2': 'klasse-2',
+                '1': 'klasse-1',
+                '12': 'klasse-12',
+                'WR': 'klasse-wr',
+                'FW': 'klasse-fw',
+                'WL': 'klasse-wl',
+                'Lok': 'klasse-lok',
+                'D': 'klasse-d',
+                'CC': 'klasse-cc'
+            };
+            return classNames[klasse] || 'klasse-unbekannt';
         }
 
         function openModal(id) {
@@ -175,10 +195,12 @@
         });
 
         document.getElementById('wagen-next').addEventListener('click', () => {
-            if (currentWagen < 3) {
-                currentWagen++;
-                updateDisplay();
+            const nextWagen = currentWagen + 1;
+            if (!wagen[nextWagen]) {
+                wagen[nextWagen] = { klasse: '?', abteilung: '—' };
             }
+            currentWagen = nextWagen;
+            updateDisplay();
         });
 
         wagenklasseElement.addEventListener('click', () => {
@@ -191,11 +213,23 @@
 
         // Wagenklasse Modal Options
         document.querySelectorAll('#wagenklasse-modal .modal-option').forEach(opt => {
+            if (opt.id === 'wagen-delete') return;
             opt.addEventListener('click', () => {
                 wagen[currentWagen].klasse = opt.dataset.value;
                 updateDisplay();
                 closeModal('wagenklasse-modal');
             });
+        });
+
+        document.getElementById('wagen-delete').addEventListener('click', () => {
+            const wagenNummern = Object.keys(wagen).map(Number).sort((a, b) => a - b);
+            if (wagenNummern.length === 1) return;
+
+            delete wagen[currentWagen];
+            const nextWagen = wagenNummern.find(wagenNummer => wagenNummer > currentWagen);
+            currentWagen = nextWagen || wagenNummern[wagenNummern.length - 2];
+            updateDisplay();
+            closeModal('wagenklasse-modal');
         });
 
         // Abteilung Modal Options
