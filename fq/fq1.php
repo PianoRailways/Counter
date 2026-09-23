@@ -228,9 +228,9 @@
     <div class="modal-overlay" id="abteilung-modal">
         <div class="modal">
             <div class="modal-title">Stockwerk</div>
-            <div class="modal-option" data-value="Unterdeck">↓ Unterdeck</div>
-            <div class="modal-option" data-value="Zwischendeck (EG)">— Zwischendeck (EG)</div>
-            <div class="modal-option" data-value="Oberdeck">↑ Oberdeck</div>
+            <div class="modal-option" data-value="Unterdeck">↓</div>
+            <div class="modal-option" data-value="Zwischendeck (EG)">—</div>
+            <div class="modal-option" data-value="Oberdeck">↑</div>
             <div class="modal-close">
                 <button onclick="closeModal('abteilung-modal')">Abbrechen</button>
             </div>
@@ -523,9 +523,9 @@
         function updateDisplay() {
             const w = currentWagen === null ? null : wagen[currentWagen];
             const deckLabels = {
-                'Unterdeck': '↓ Unter',
-                'Zwischendeck (EG)': '— Zwischen',
-                'Oberdeck': '↑ Ober'
+                'Unterdeck': '↓',
+                'Zwischendeck (EG)': '—',
+                'Oberdeck': '↑'
             };
             abteilungElement.textContent = currentDeck ? deckLabels[currentDeck] : (w ? 'Stockwerk' : '');
             renderWagenButtons();
