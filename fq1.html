@@ -304,9 +304,9 @@
 
         function updateDisplay() {
             const w = wagen[currentWagen];
-            let abtText = 'Abt.2.';
-            if (w.abteilung === '↑') abtText = 'Abt.1.';
-            else if (w.abteilung === '—') abtText = 'Einstöckig';
+            let abtText = '↓';
+            if (w.abteilung === '↑') abtText = '↑';
+            else if (w.abteilung === '—') abtText = '–';
             abteilungElement.textContent = abtText;
             renderWagenButtons();
         }
