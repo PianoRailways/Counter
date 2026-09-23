@@ -340,9 +340,24 @@ body {
 .grid-section {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
     gap: 3px;
+    width: 100%;
+    height: 216px;
     padding: 8px;
     background: #ccff00;
+}
+
+.grid-section.count-mode {
+    background: #ffd966;
+}
+
+.count-panel[hidden] {
+    display: none;
+}
+
+.grid-section.count-mode .grid-cell {
+    display: none;
 }
 
 .grid-cell {
@@ -368,6 +383,75 @@ body {
 
 .grid-cell:active {
     background: #c0e8c0;
+}
+
+.count-cell {
+    flex-direction: column;
+    gap: 4px;
+}
+
+.count-cell strong {
+    font-size: 16px;
+}
+
+.count-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    width: 100%;
+    height: 200px;
+}
+
+.count-panel-header,
+.count-input,
+.count-actions,
+.count-close {
+    grid-column: 1 / -1;
+}
+
+.count-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 8px;
+    background: #333;
+    color: white;
+    font-size: 15px;
+}
+
+.count-input {
+    min-width: 0;
+    padding: 7px;
+    border: 2px solid #333;
+    font-size: 17px;
+    text-align: center;
+}
+
+.count-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.count-action,
+.count-close {
+    border: 1px solid #333;
+    background: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.count-action.add { background: #d9f2d9; }
+.count-action.subtract { background: #f7d5d5; }
+.count-action.reset { background: #eee; }
+
+.count-close {
+    grid-column: 2;
+    min-height: 29px;
+    background: #333;
+    color: white;
 }
 
 .control-bar {
