@@ -1,3 +1,15 @@
+:root {
+	--c1: #ffeb3b;
+    --c2: #ff8a80;
+    --wr: #e040fb;
+	--dog: #4caf50;
+    --bike: #2196f3;
+    --nav: #8bc34a;
+	--exp: #212121;
+    --res: #f44336;
+    --wres: #fb8c00;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -99,11 +111,12 @@ body {
 }
 
 .wagen-button.klasse-2 {
-    background: red;
+    background: var(--c2);
+    color: white;
 }
 
 .wagen-button.klasse-1 {
-    background: yellow;
+    background: var(--c1);
 }
 
 .wagen-button.klasse-12 {
@@ -111,10 +124,12 @@ body {
 }
 
 .wagen-button.klasse-wr {
-    background: violet;
+    background: var(--wr);
+    color: white;
 }
 .wagen-button.klasse-fw {
-    background: blue;
+    background: #325ecd;
+    color: white;
 }
 
 .wagen-button.klasse-wl {
@@ -123,6 +138,10 @@ body {
 
 .wagen-button.klasse-lok {
     background: black;
+}
+.wagen-button.klasse-nogangway {
+    background: black;
+    color: red;
 }
 
 .wagen-button.klasse-d {
