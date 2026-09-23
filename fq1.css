@@ -22,8 +22,7 @@ body {
 }
 
 .panel-header {
-    display: grid;
-    grid-template-columns: 1fr 40px 56px 40px 1fr;
+    display: flex;
     gap: 8px;
     padding: 8px;
     background: #f0f0f0;
@@ -31,6 +30,46 @@ body {
     font-size: 13px;
     font-weight: bold;
     align-items: center;
+}
+
+.wagen-slider {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.wagen-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.wagen-track {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    min-width: max-content;
+    padding: 2px;
+}
+
+.wagen-button {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 36px;
+    border: 2px solid #333;
+    padding: 0;
+    color: #333;
+    cursor: pointer;
+    font-weight: bold;
+    user-select: none;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.wagen-button.selected {
+    border-color: #d4a017;
+    box-shadow: 0 0 0 2px #f5d76e;
 }
 
 .header-field {
@@ -59,42 +98,42 @@ body {
     color: #333;
 }
 
-.header-field.klasse-2 {
+.wagen-button.klasse-2 {
     background: red;
 }
 
-.header-field.klasse-1 {
+.wagen-button.klasse-1 {
     background: yellow;
 }
 
-.header-field.klasse-12 {
+.wagen-button.klasse-12 {
     background: #ffb347;
 }
 
-.header-field.klasse-wr {
+.wagen-button.klasse-wr {
     background: violet;
 }
-.header-field.klasse-fw {
+.wagen-button.klasse-fw {
     background: blue;
 }
 
-.header-field.klasse-wl {
+.wagen-button.klasse-wl {
     background: #8ecae6;
 }
 
-.header-field.klasse-lok {
+.wagen-button.klasse-lok {
     background: black;
 }
 
-.header-field.klasse-d {
+.wagen-button.klasse-d {
     background: #c9daf8;
 }
 
-.header-field.klasse-cc {
+.wagen-button.klasse-cc {
     background: #d9d2e9;
 }
 
-.header-field.klasse-unbekannt {
+.wagen-button.klasse-unbekannt {
     background: white;
 }
 
@@ -109,6 +148,10 @@ body {
     font-size: 14px;
     user-select: none;
     transition: background 0.1s;
+}
+
+.add-btn {
+    font-size: 20px;
 }
 
 .nav-btn:hover {
