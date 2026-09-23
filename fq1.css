@@ -23,13 +23,14 @@ body {
 
 .panel-header {
     display: grid;
-    grid-template-columns: 30px 50px 80px 1fr 60px 30px;
-    gap: 4px;
+    grid-template-columns: 1fr auto auto 1fr;
+    gap: 8px;
     padding: 8px;
     background: #f0f0f0;
     border-bottom: 2px solid #ccc;
     font-size: 13px;
     font-weight: bold;
+    align-items: center;
 }
 
 .header-field {
@@ -38,8 +39,19 @@ body {
     justify-content: center;
     background: white;
     border: 2px solid #333;
-    padding: 4px;
-    position: relative;
+    padding: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+    min-height: 36px;
+}
+
+.header-field:hover {
+    background: #f5f5f5;
+}
+
+.header-field:active {
+    background: #e0e0e0;
 }
 
 .header-field.highlight {
@@ -47,22 +59,40 @@ body {
     color: #333;
 }
 
+.nav-btn {
+    background: white;
+    border: 2px solid #333;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    user-select: none;
+    transition: background 0.1s;
+}
+
+.nav-btn:hover {
+    background: #f5f5f5;
+}
+
+.nav-btn:active {
+    background: #e0e0e0;
+}
+
 .section-bar {
-    display: grid;
-    grid-template-columns: 50px 50px 50px 1fr 60px 60px;
-    gap: 4px;
-    padding: 6px;
+    padding: 8px;
     background: #333;
     color: white;
     font-size: 11px;
-    font-weight: bold;
 }
 
-.section-bar div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
+.section-bar table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.section-bar td {
+    padding: 4px 8px;
+    border: 1px solid #555;
 }
 
 .data-display {
@@ -84,18 +114,10 @@ body {
     border: 1px solid #999;
     padding: 6px;
     min-height: 28px;
-    position: relative;
 }
 
 .data-field.small {
     font-size: 11px;
-}
-
-.icon-small {
-    width: 16px;
-    height: 16px;
-    background: #ddd;
-    border: 1px solid #999;
 }
 
 .button-row {
@@ -109,12 +131,22 @@ body {
 }
 
 .button-small {
-    padding: 6px;
+    padding: 8px;
     background: #ddd;
     border: 1px solid #999;
     text-align: center;
     cursor: pointer;
     font-weight: bold;
+    transition: background 0.1s;
+    user-select: none;
+}
+
+.button-small:hover {
+    background: #ccc;
+}
+
+.button-small:active {
+    background: #bbb;
 }
 
 .grid-section {
@@ -137,6 +169,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+}
+
+.grid-cell:hover {
+    background: #d0f0d0;
+}
+
+.grid-cell:active {
+    background: #c0e8c0;
 }
 
 .control-bar {
@@ -156,14 +199,25 @@ body {
     justify-content: center;
     background: white;
     border: 1px solid #999;
-    padding: 4px;
-    min-height: 24px;
+    padding: 6px;
+    min-height: 28px;
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+    font-weight: bold;
+}
+
+.control-field:hover {
+    background: #f5f5f5;
+}
+
+.control-field:active {
+    background: #e0e0e0;
 }
 
 .control-field.highlight {
     background: #ff4444;
     color: white;
-    font-weight: bold;
 }
 
 .star-icon {
@@ -175,6 +229,17 @@ body {
     background: white;
     border: 1px solid #999;
     font-size: 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+}
+
+.star-icon:hover {
+    background: #f5f5f5;
+}
+
+.star-icon:active {
+    background: #e0e0e0;
 }
 
 .keyboard {
@@ -213,6 +278,76 @@ body {
     font-size: 11px;
 }
 
-.key.wide {
-    grid-column: 2 / 3;
+/* Popup Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    border: 2px solid #333;
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+}
+
+.modal-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 8px;
+}
+
+.modal-option {
+    padding: 10px 12px;
+    margin: 4px 0;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 2px;
+    font-size: 12px;
+    transition: background 0.1s;
+    user-select: none;
+}
+
+.modal-option:hover {
+    background: #e0e0e0;
+}
+
+.modal-option:active {
+    background: #d0d0d0;
+}
+
+.modal-close {
+    text-align: center;
+    margin-top: 12px;
+}
+
+.modal-close button {
+    padding: 6px 16px;
+    background: #ddd;
+    border: 1px solid #999;
+    border-radius: 2px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.1s;
+}
+
+.modal-close button:hover {
+    background: #ccc;
 }

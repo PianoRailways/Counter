@@ -8,16 +8,17 @@
 </head>
 <body>
     <div class="panel-container">
-        <!-- Header -->
+        <!-- Header with Wagenklasse -->
         <div class="panel-header">
-            <div class="header-field highlight">1</div>
-            <div class="header-field highlight">2</div>
-            <div class="header-field highlight">3</div>
+            <div></div>
+            <button class="nav-btn" id="wagen-prev">◀</button>
+            <div id="wagenklasse" class="header-field highlight">2</div>
+            <button class="nav-btn" id="wagen-next">▶</button>
         </div>
 
         <!-- Section Bar -->
         <div class="section-bar">
-            <table style="width: 100%; flex: 1; align-items: center; text-align: left;">
+            <table>
                 <tr>
                     <td>EBG</td>
                     <td>TestTesttest</td>
@@ -30,7 +31,7 @@
                 </tr>
             </table>
         </div>
-<hr>
+
         <!-- Data Display -->
         <div class="data-display">
             <div class="data-field">48099</div>
@@ -45,71 +46,177 @@
 
         <!-- Button Row -->
         <div class="button-row">
-            <div class="button-small"></div>
-            <div class="button-small">1./2.</div>
-            <div class="button-small">Ausl</div>
-            <div class="button-small">Ansch</div>
-        </div>
-        <div class="button-row" style="border-bottom: none;">
-            <div class="button-small"></div>
-            <div class="button-small"></div>
-            <div class="button-small"></div>
-            <div class="button-small">Steh</div>
+            <button class="button-small">1./2.</button>
+            <button class="button-small">Ausl</button>
+            <button class="button-small">Steh</button>
+            <button class="button-small">Ansch</button>
         </div>
 
         <!-- Grid Section -->
         <div class="grid-section">
-            <div class="grid-cell">ABO</div>
-            <div class="grid-cell">BIGT</div>
-            <div class="grid-cell">EF</div>
-            <div class="grid-cell">HR</div>
-            <div class="grid-cell">TK</div>
-            <div class="grid-cell">VERBUND</div>
-            <div class="grid-cell">1/2-ABO</div>
-            <div class="grid-cell">SPEZ</div>
-            <div class="grid-cell">MFK</div>
-            <div class="grid-cell">GRUPPE</div>
-            <div class="grid-cell">JUN/SEN</div>
-            <div class="grid-cell">EURAIL</div>
-            <div class="grid-cell">I-ABO</div>
-            <div class="grid-cell">GA</div>
-            <div class="grid-cell">1/2</div>
-            <div class="grid-cell">FAMILIE</div>
+            <button class="grid-cell">ABO</button>
+            <button class="grid-cell">BIGT</button>
+            <button class="grid-cell">EF</button>
+            <button class="grid-cell">HR</button>
+            <button class="grid-cell">TK</button>
+            <button class="grid-cell">VERBUND</button>
+            <button class="grid-cell">1/2-ABO</button>
+            <button class="grid-cell">SPEZ</button>
+            <button class="grid-cell">MFK</button>
+            <button class="grid-cell">GRUPPE</button>
+            <button class="grid-cell">JUN/SEN</button>
+            <button class="grid-cell">EURAIL</button>
+            <button class="grid-cell">I-ABO</button>
+            <button class="grid-cell">GA</button>
+            <button class="grid-cell">1/2</button>
+            <button class="grid-cell">FAMILIE</button>
         </div>
 
         <!-- Control Bar -->
         <div class="control-bar">
-            <div class="control-field">Abt.2.</div>
-            <div class="control-field">2/100</div>
-            <div class="control-field">1x</div>
-            <div class="star-icon">★</div>
-            <div class="control-field highlight">ASP</div>
-            <div class="control-field">1</div>
-            <div class="control-field">Leer</div>
+            <button class="control-field" id="abteilung">Abt.2.</button>
+            <button class="control-field">2/100</button>
+            <button class="control-field">1x</button>
+            <button class="star-icon">★</button>
+            <button class="control-field highlight">ASP</button>
+            <button class="control-field">1</button>
+            <button class="control-field">Leer</button>
         </div>
 
         <!-- Keyboard -->
         <div class="keyboard">
-            <div class="key">1</div>
-            <div class="key">2</div>
-            <div class="key">3</div>
-            <div class="key" style="grid-row: 1; grid-column: 4; grid-row-end: 3;">⊡</div>
+            <button class="key">1</button>
+            <button class="key">2</button>
+            <button class="key">3</button>
+            <button class="key" style="grid-row: 1; grid-column: 4; grid-row-end: 3;">⊡</button>
             
-            <div class="key">4</div>
-            <div class="key">5</div>
-            <div class="key">6</div>
+            <button class="key">4</button>
+            <button class="key">5</button>
+            <button class="key">6</button>
             
-            <div class="key">7</div>
-            <div class="key">8</div>
-            <div class="key">9</div>
-            <div class="key" style="grid-row: 4; grid-column: 4;">Weiter</div>
+            <button class="key">7</button>
+            <button class="key">8</button>
+            <button class="key">9</button>
+            <button class="key" style="grid-row: 4; grid-column: 4;">Weiter</button>
             
-            <div class="key">abc</div>
-            <div class="key">0</div>
-            <div class="key function">Hafas-Zuglauf</div>
+            <button class="key">abc</button>
+            <button class="key">0</button>
+            <button class="key function">Hafas-Zuglauf</button>
             
-            <div class="key function" style="grid-column: 1 / 5; margin-top: 8px;">Enter</div>
+            <button class="key function" style="grid-column: 1 / 5; margin-top: 8px;">Enter</button>
         </div>
     </div>
+
+    <!-- Wagenklasse Modal -->
+    <div class="modal-overlay" id="wagenklasse-modal">
+        <div class="modal">
+            <div class="modal-title">Wagenklasse</div>
+            <div class="modal-option" data-value="2">2. Klasse (2)</div>
+            <div class="modal-option" data-value="1">1. Klasse (1)</div>
+            <div class="modal-option" data-value="12">1. und 2. Klasse (12)</div>
+            <div class="modal-option" data-value="WR">Restaurant (WR)</div>
+            <div class="modal-option" data-value="WL">Schlafwagen (WL)</div>
+            <div class="modal-option" data-value="FW">Spielwagen/Familienwagen (FW)</div>
+            <div class="modal-close">
+                <button onclick="closeModal('wagenklasse-modal')">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abteilung Modal -->
+    <div class="modal-overlay" id="abteilung-modal">
+        <div class="modal">
+            <div class="modal-title">Abteilung</div>
+            <div class="modal-option" data-value="↓">⬇ unten</div>
+            <div class="modal-option" data-value="↑">⬆ oben</div>
+            <div class="modal-option" data-value="—">— Einstöckig</div>
+            <div class="modal-close">
+                <button onclick="closeModal('abteilung-modal')">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentWagen = 1;
+        let wagen = {
+            1: { klasse: '2', abteilung: '↓' },
+            2: { klasse: '2', abteilung: '—' },
+            3: { klasse: '1', abteilung: '↑' }
+        };
+
+        const wagenklasseElement = document.getElementById('wagenklasse');
+        const abteilungElement = document.getElementById('abteilung');
+        const wagenklasseModal = document.getElementById('wagenklasse-modal');
+        const abteilungModal = document.getElementById('abteilung-modal');
+
+        function updateDisplay() {
+            const w = wagen[currentWagen];
+            wagenklasseElement.textContent = w.klasse;
+            
+            let abtText = 'Abt.2.';
+            if (w.abteilung === '↑') abtText = 'Abt.1.';
+            else if (w.abteilung === '—') abtText = 'Einstöckig';
+            abteilungElement.textContent = abtText;
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        document.getElementById('wagen-prev').addEventListener('click', () => {
+            if (currentWagen > 1) {
+                currentWagen--;
+                updateDisplay();
+            }
+        });
+
+        document.getElementById('wagen-next').addEventListener('click', () => {
+            if (currentWagen < 3) {
+                currentWagen++;
+                updateDisplay();
+            }
+        });
+
+        wagenklasseElement.addEventListener('click', () => {
+            openModal('wagenklasse-modal');
+        });
+
+        abteilungElement.addEventListener('click', () => {
+            openModal('abteilung-modal');
+        });
+
+        // Wagenklasse Modal Options
+        document.querySelectorAll('#wagenklasse-modal .modal-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                wagen[currentWagen].klasse = opt.dataset.value;
+                updateDisplay();
+                closeModal('wagenklasse-modal');
+            });
+        });
+
+        // Abteilung Modal Options
+        document.querySelectorAll('#abteilung-modal .modal-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                wagen[currentWagen].abteilung = opt.dataset.value;
+                updateDisplay();
+                closeModal('abteilung-modal');
+            });
+        });
+
+        // Close on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        updateDisplay();
+    </script>
 </body>
 </html>
