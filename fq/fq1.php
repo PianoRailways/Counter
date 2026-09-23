@@ -114,22 +114,22 @@
 
         <!-- Grid Section -->
         <div class="grid-section">
-                <button class="grid-cell count-cell" data-count-key="A"><span>A</span><strong>0</strong></button>
-                <button class="grid-cell count-cell" data-count-key="B"><span>B</span><strong>0</strong></button>
-                <button class="grid-cell count-cell" data-count-key="WR"><span>WR</span><strong>0</strong></button>
-                <button class="grid-cell">HR</button>
-                <button class="grid-cell">TK</button>
-                <button class="grid-cell">VERBUND</button>
-                <button class="grid-cell">1/2-ABO</button>
-                <button class="grid-cell">SPEZ</button>
-                <button class="grid-cell count-cell" data-count-key="VELO"><span>VELO</span><strong>0</strong></button>
-                <button class="grid-cell count-cell" data-count-key="SKUUTER"><span>SKUUTER</span><strong>0</strong></button>
-                <button class="grid-cell count-cell" data-count-key="KIWA"><span>KIWA</span><strong>0</strong></button>
-                <button class="grid-cell count-cell" data-count-key="BEHIG"><span>BEHIG</span><strong>0</strong></button>
-                <button class="grid-cell count-cell" data-count-key="DOG"><span>DOG</span><strong>0</strong></button>
-                <button class="grid-cell">GA</button>
-                <button class="grid-cell">1/2</button>
-                <button class="grid-cell">FAMILIE</button>
+                <button class="grid-cell count-cell" data-count-key="A"><span>A</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="B"><span>B</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="WR"><span>WR</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell nofunction">HR</button>
+                <button class="grid-cell nofunction">TK</button>
+                <button class="grid-cell nofunction">VERBUND</button>
+                <button class="grid-cell nofunction">1/2-ABO</button>
+                <button class="grid-cell nofunction">SPEZ</button>
+                <button class="grid-cell count-cell" data-count-key="VELO"><span>VELO</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="SKUUTER"><span>SKUUTER</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="KIWA"><span>KIWA</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="BEHIG"><span>BEHIG</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="DOG"><span>DOG</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell nofunction">GA</button>
+                <button class="grid-cell nofunction">1/2</button>
+                <button class="grid-cell nofunction">FAMILIE</button>
             <div class="count-panel" id="count-panel" hidden>
                 <div class="count-panel-header">
                     <span id="count-panel-title">A</span>
@@ -227,10 +227,10 @@
     <!-- Abteilung Modal -->
     <div class="modal-overlay" id="abteilung-modal">
         <div class="modal">
-            <div class="modal-title">Abteilung</div>
-            <div class="modal-option" data-value="↓">⬇ unten</div>
-            <div class="modal-option" data-value="↑">⬆ oben</div>
-            <div class="modal-option" data-value="—">— Einstöckig</div>
+            <div class="modal-title">Stockwerk</div>
+            <div class="modal-option" data-value="Unterdeck">Unterdeck</div>
+            <div class="modal-option" data-value="Zwischendeck">Zwischendeck</div>
+            <div class="modal-option" data-value="Oberdeck">Oberdeck</div>
             <div class="modal-close">
                 <button onclick="closeModal('abteilung-modal')">Abbrechen</button>
             </div>
@@ -251,13 +251,19 @@
 
     <script>
         const countKeys = ['A', 'B', 'WR', 'VELO', 'DOG', 'SKUUTER', 'KIWA', 'BEHIG'];
+        const deckNames = ['Unterdeck', 'Zwischendeck', 'Oberdeck'];
 
         function createEmptyCounts() {
             return Object.fromEntries(countKeys.map(key => [key, 0]));
         }
 
+        function createEmptyWagen() {
+            return { klasse: '?', decks: {} };
+        }
+
         let currentWagen = null;
         let wagen = {};
+        let currentDeck = null;
 
         const abteilungElement = document.getElementById('abteilung');
         const wagenSliderElement = document.querySelector('.wagen-slider');
@@ -413,27 +419,32 @@
 
         function renderCountValues() {
             document.querySelectorAll('[data-count-key]').forEach(button => {
-                button.querySelector('strong').textContent = countValues[button.dataset.countKey];
+                const key = button.dataset.countKey;
+                button.querySelector('strong').textContent = countValues[key];
+                button.querySelector('.deck-counts').textContent = deckNames.map(deckName => {
+                    const value = wagen[currentWagen]?.decks?.[deckName]?.counts?.[key] || 0;
+                    return `${deckName.slice(0, 1)}:${value}`;
+                }).join(' ');
             });
         }
 
         function syncCountValuesToWagen() {
-            if (currentWagen === null || !wagen[currentWagen]) return;
-            wagen[currentWagen].counts = { ...countValues };
+            if (currentWagen === null || !wagen[currentWagen] || !currentDeck) return;
+            wagen[currentWagen].decks[currentDeck] = { counts: { ...countValues } };
         }
 
         function loadCountValuesForWagen() {
-            if (currentWagen === null || !wagen[currentWagen]) {
+            if (currentWagen === null || !wagen[currentWagen] || !currentDeck) {
                 Object.assign(countValues, createEmptyCounts());
                 renderCountValues();
                 return;
             }
-            Object.assign(countValues, createEmptyCounts(), wagen[currentWagen].counts || {});
+            Object.assign(countValues, createEmptyCounts(), wagen[currentWagen].decks[currentDeck]?.counts || {});
             renderCountValues();
         }
 
         function openCountPanel(key) {
-            if (currentWagen === null) return;
+            if (currentWagen === null || !currentDeck) return;
             activeCountKey = key;
             countPanelTitleElement.textContent = key;
             countPanelValueElement.textContent = countValues[key];
@@ -492,10 +503,20 @@
 
         function updateDisplay() {
             const w = currentWagen === null ? null : wagen[currentWagen];
-            let abtText = w?.abteilung || '';
-            if (abtText === '—') abtText = '–';
-            abteilungElement.textContent = abtText;
+            abteilungElement.textContent = currentDeck || (w ? 'Stockwerk' : '');
             renderWagenButtons();
+        }
+
+        function selectDeck(deckName) {
+            if (currentWagen === null || !wagen[currentWagen]) return;
+            syncCountValuesToWagen();
+            if (!wagen[currentWagen].decks) wagen[currentWagen].decks = {};
+            if (!wagen[currentWagen].decks[deckName]) {
+                wagen[currentWagen].decks[deckName] = { counts: createEmptyCounts() };
+            }
+            currentDeck = deckName;
+            loadCountValuesForWagen();
+            updateDisplay();
         }
 
         function renderWagenButtons() {
@@ -521,7 +542,10 @@
                         openModal('wagenklasse-modal');
                         return;
                     }
+                    syncCountValuesToWagen();
                     currentWagen = wagenNummer;
+                    const deckNames = Object.keys(wagen[wagenNummer].decks || {});
+                    currentDeck = deckNames[0] || null;
                     loadCountValuesForWagen();
                     updateDisplay();
                 });
@@ -596,6 +620,8 @@
             if (aktuellerIndex > 0) {
                 syncCountValuesToWagen();
                 currentWagen = wagenNummern[aktuellerIndex - 1];
+                const deckNames = Object.keys(wagen[currentWagen].decks || {});
+                currentDeck = deckNames[0] || null;
                 loadCountValuesForWagen();
                 updateDisplay();
             }
@@ -604,16 +630,18 @@
         document.getElementById('wagen-next').addEventListener('click', () => {
             const nextWagen = currentWagen === null ? 1 : currentWagen + 1;
             if (!wagen[nextWagen]) {
-                wagen[nextWagen] = { klasse: '?', abteilung: '—', remarque: '', counts: createEmptyCounts() };
+                wagen[nextWagen] = createEmptyWagen();
             }
             syncCountValuesToWagen();
             currentWagen = nextWagen;
+            currentDeck = Object.keys(wagen[currentWagen].decks || {})[0] || null;
             loadCountValuesForWagen();
             updateDisplay();
             openModal('wagenklasse-modal');
         });
 
         abteilungElement.addEventListener('click', () => {
+            if (currentWagen === null) return;
             openModal('abteilung-modal');
         });
 
@@ -654,7 +682,9 @@
                 currentWagen,
                 wagen: Object.fromEntries(Object.entries(wagen).map(([number, data]) => [number, {
                     ...data,
-                    counts: { ...(data.counts || createEmptyCounts()) }
+                    decks: Object.fromEntries(Object.entries(data.decks || {}).map(([deckName, deckData]) => [deckName, {
+                        counts: { ...(deckData.counts || createEmptyCounts()) }
+                    }]))
                 }]))
             };
         }
@@ -723,13 +753,31 @@
                     wagonHeading.textContent = `Wagen ${number} · Klasse ${wagonData.klasse || '-'}`;
                     wagonElement.appendChild(wagonHeading);
 
-                    const counts = wagonData.counts || payload.counts || {};
-                    const countText = Object.entries(counts)
-                        .filter(([, value]) => Number(value) !== 0)
-                        .map(([key, value]) => `${key}: ${value}`)
-                        .join(', ') || 'Keine Auslastungsdaten';
                     const details = document.createElement('div');
-                    details.textContent = `${countText} · Abteilung: ${wagonData.abteilung || '-'}${wagonData.remarque ? ` · Remarque: ${wagonData.remarque}` : ''}`;
+                    const deckEntries = Object.entries(wagonData.decks || {});
+                    const legacyCounts = wagonData.counts || payload.counts || {};
+                    if (deckEntries.length) {
+                        deckEntries.forEach(([deckName, deckData]) => {
+                            const deckElement = document.createElement('div');
+                            const countText = Object.entries(deckData.counts || {})
+                                .filter(([, value]) => Number(value) !== 0)
+                                .map(([key, value]) => `${key}: ${value}`)
+                                .join(', ') || 'Keine Auslastungsdaten';
+                            deckElement.textContent = `${deckName}: ${countText}`;
+                            details.appendChild(deckElement);
+                        });
+                    } else {
+                        const countText = Object.entries(legacyCounts)
+                            .filter(([, value]) => Number(value) !== 0)
+                            .map(([key, value]) => `${key}: ${value}`)
+                            .join(', ') || 'Keine Auslastungsdaten';
+                        details.textContent = `${countText} · Abteilung: ${wagonData.abteilung || '-'}`;
+                    }
+                    if (wagonData.remarque) {
+                        const remarqueElement = document.createElement('div');
+                        remarqueElement.textContent = `Remarque: ${wagonData.remarque}`;
+                        details.appendChild(remarqueElement);
+                    }
                     wagonElement.appendChild(details);
                     wagonList.appendChild(wagonElement);
                 });
@@ -779,6 +827,9 @@
             delete wagen[currentWagen];
             const nextWagen = wagenNummern.find(wagenNummer => wagenNummer > currentWagen);
             currentWagen = nextWagen || wagenNummern[wagenNummern.length - 2];
+            const deckNames = Object.keys(wagen[currentWagen].decks || {});
+            currentDeck = deckNames[0] || null;
+            loadCountValuesForWagen();
             updateDisplay();
             closeModal('wagenklasse-modal');
         });
@@ -787,7 +838,7 @@
         document.querySelectorAll('#abteilung-modal .modal-option').forEach(opt => {
             opt.addEventListener('click', () => {
                 if (currentWagen === null) return;
-                wagen[currentWagen].abteilung = opt.dataset.value;
+                selectDeck(opt.dataset.value);
                 updateDisplay();
                 closeModal('abteilung-modal');
             });

@@ -453,6 +453,12 @@ body {
     transition: background 0.1s;
     user-select: none;
 }
+.nofunction {
+    background: #5e3333;
+    border-color: #999;
+    color: #999;
+    cursor: not-allowed;
+}
 
 .grid-cell:hover {
     background: #d0f0d0;
@@ -469,6 +475,14 @@ body {
 
 .count-cell strong {
     font-size: 16px;
+}
+
+.deck-counts {
+    color: #555;
+    font-size: 8px;
+    font-weight: normal;
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .count-panel {
@@ -567,6 +581,13 @@ body {
 .control-field.highlight {
     background: #ff4444;
     color: white;
+}
+
+#abteilung {
+    font-size: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .star-icon {
