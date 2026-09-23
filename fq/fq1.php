@@ -100,7 +100,7 @@
             <button class="button-small">1./2.</button>
             <button class="button-small">Ausl</button>
             <button class="button-small" id="remarque-button">Remarque</button>
-            <button class="button-small"></button>
+            <button class="button-small">View</button>
         </div>
 
         <!-- Grid Section -->
