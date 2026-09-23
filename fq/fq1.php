@@ -85,7 +85,7 @@
                 </label>
                 <div class="station-suggestions" id="in-suggestions"></div>
             </div>
-            <button class="data-field function-field" type="button">Ausl.</button>
+            <button class="data-field function-field nofunction" type="button">Ausl.</button>
             <div class="station-field">
                 <label class="data-field input-field">
                     <span></span>
@@ -147,7 +147,7 @@
 
         <!-- Control Bar -->
         <div class="control-bar">
-            <button class="control-field" id="abteilung">Abt.2.</button>
+            <button class="control-field" id="abteilung">Stockwerk</button>
             <button class="control-field fq">2/100</button>
             <button class="control-field">1x</button>
             <button class="star-icon" id="save-button" type="button" aria-label="FQ speichern" title="FQ speichern">&#128190;</button>
@@ -228,9 +228,9 @@
     <div class="modal-overlay" id="abteilung-modal">
         <div class="modal">
             <div class="modal-title">Stockwerk</div>
-            <div class="modal-option" data-value="Unterdeck">Unterdeck</div>
-            <div class="modal-option" data-value="Zwischendeck">Zwischendeck</div>
-            <div class="modal-option" data-value="Oberdeck">Oberdeck</div>
+            <div class="modal-option" data-value="Unterdeck">↓ Unterdeck</div>
+            <div class="modal-option" data-value="Zwischendeck (EG)">— Zwischendeck (EG)</div>
+            <div class="modal-option" data-value="Oberdeck">↑ Oberdeck</div>
             <div class="modal-close">
                 <button onclick="closeModal('abteilung-modal')">Abbrechen</button>
             </div>
@@ -251,7 +251,7 @@
 
     <script>
         const countKeys = ['A', 'B', 'WR', 'VELO', 'DOG', 'SKUUTER', 'KIWA', 'BEHIG'];
-        const deckNames = ['Unterdeck', 'Zwischendeck', 'Oberdeck'];
+        const deckNames = ['Unterdeck', 'Zwischendeck (EG)', 'Oberdeck'];
 
         function createEmptyCounts() {
             return Object.fromEntries(countKeys.map(key => [key, 0]));
@@ -264,6 +264,14 @@
         let currentWagen = null;
         let wagen = {};
         let currentDeck = null;
+
+        function ensureActiveWagen() {
+            if (currentWagen === null) {
+                currentWagen = 1;
+                wagen[currentWagen] = createEmptyWagen();
+            }
+            if (!currentDeck) selectDeck('Zwischendeck (EG)');
+        }
 
         const abteilungElement = document.getElementById('abteilung');
         const wagenSliderElement = document.querySelector('.wagen-slider');
@@ -293,6 +301,7 @@
                 option.type = 'button';
                 option.textContent = kategorie;
                 option.addEventListener('click', () => {
+                    ensureActiveWagen();
                     kategorieElement.querySelector('strong').textContent = kategorie;
                     closeModal('kategorie-modal');
                 });
@@ -307,6 +316,7 @@
 
             document.querySelectorAll('.number-key').forEach(key => {
                 key.addEventListener('click', () => {
+                    ensureActiveWagen();
                     if (activeCountKey) {
                         countInputElement.value += key.textContent;
                         countInputElement.focus();
@@ -328,6 +338,7 @@
             });
 
             document.getElementById('vehicle-keyboard').addEventListener('click', () => {
+                ensureActiveWagen();
                 document.getElementById('vehicle-modal-input').value = fahrtzeugtypElement.value;
                 openModal('vehicle-keyboard-modal');
             });
@@ -359,9 +370,17 @@
                 closeModal('vehicle-keyboard-modal');
             });
 
+            fahrtzeugtypElement.addEventListener('input', ensureActiveWagen);
+
             document.querySelectorAll('.station-field input').forEach(input => {
-                input.addEventListener('input', () => updateStationSuggestions(input));
-                input.addEventListener('focus', () => updateStationSuggestions(input));
+                input.addEventListener('input', () => {
+                    ensureActiveWagen();
+                    updateStationSuggestions(input);
+                });
+                input.addEventListener('focus', () => {
+                    ensureActiveWagen();
+                    updateStationSuggestions(input);
+                });
             });
         }
 
@@ -444,7 +463,7 @@
         }
 
         function openCountPanel(key) {
-            if (currentWagen === null || !currentDeck) return;
+            ensureActiveWagen();
             activeCountKey = key;
             countPanelTitleElement.textContent = key;
             countPanelValueElement.textContent = countValues[key];
@@ -503,7 +522,12 @@
 
         function updateDisplay() {
             const w = currentWagen === null ? null : wagen[currentWagen];
-            abteilungElement.textContent = currentDeck || (w ? 'Stockwerk' : '');
+            const deckLabels = {
+                'Unterdeck': '↓ Unter',
+                'Zwischendeck (EG)': '— Zwischen',
+                'Oberdeck': '↑ Ober'
+            };
+            abteilungElement.textContent = currentDeck ? deckLabels[currentDeck] : (w ? 'Stockwerk' : '');
             renderWagenButtons();
         }
 
