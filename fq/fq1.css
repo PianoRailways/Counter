@@ -514,6 +514,11 @@ body {
     background: #e0e0e0;
 }
 
+.star-icon:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
 .keyboard {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

@@ -141,7 +141,7 @@
             <button class="control-field" id="abteilung">Abt.2.</button>
             <button class="control-field fq">2/100</button>
             <button class="control-field">1x</button>
-            <button class="star-icon">★</button>
+            <button class="star-icon" id="save-button" type="button" aria-label="FQ speichern" title="FQ speichern">&#128190;</button>
             <button class="control-field highlight">ASP</button>
             <button class="control-field">1</button>
             <button class="control-field">Leer</button>
@@ -254,6 +254,7 @@
         const fahrtnummerElement = document.getElementById('fahrtnummer');
         const kategorieElement = document.getElementById('kategorie');
         const fahrtzeugtypElement = document.getElementById('fahrtzeugtyp');
+        const saveButtonElement = document.getElementById('save-button');
         let dragStartX = 0;
         let dragStartScrollLeft = 0;
         let isDraggingWagenSlider = false;
@@ -591,6 +592,49 @@
 
         document.getElementById('remarque-cancel').addEventListener('click', () => {
             closeModal('remarque-modal');
+        });
+
+        function createExportPayload() {
+            const stationInputs = {
+                from: document.getElementById('in-station').value.trim(),
+                to: document.getElementById('out-station').value.trim()
+            };
+
+            return {
+                tripNumber: fahrtnummerElement.value,
+                category: kategorieElement.querySelector('strong').textContent,
+                vehicleType: fahrtzeugtypElement.value,
+                stations: stationInputs,
+                counts: { ...countValues },
+                currentWagen,
+                wagen: Object.fromEntries(Object.entries(wagen).map(([number, data]) => [number, { ...data }]))
+            };
+        }
+
+        saveButtonElement.addEventListener('click', async () => {
+            saveButtonElement.disabled = true;
+            try {
+                const response = await fetch('fq_save.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(createExportPayload())
+                });
+                const responseText = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    throw new Error(`Ungültige Serverantwort (${response.status}).`);
+                }
+                if (!response.ok || !result.ok) throw new Error(result.error || 'Speichern fehlgeschlagen.');
+                saveButtonElement.title = `Gespeichert: Version ${result.version}`;
+                alert(`Gespeichert als Version ${result.version}`);
+            } catch (error) {
+                console.error(error);
+                alert('Die Daten konnten nicht gespeichert werden.');
+            } finally {
+                saveButtonElement.disabled = false;
+            }
         });
 
         // Wagenklasse Modal Options
