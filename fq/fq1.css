@@ -337,6 +337,83 @@ body {
     background: #bbb;
 }
 
+.view-panel[hidden] {
+    display: none;
+}
+
+.panel-container.view-mode .data-display,
+.panel-container.view-mode .grid-section,
+.panel-container.view-mode .control-bar,
+.panel-container.view-mode .keyboard {
+    display: none;
+}
+
+.panel-container.view-mode .button-row .button-small:not(#view-button) {
+    display: none;
+}
+
+.panel-container.view-mode .button-row {
+    grid-template-columns: 1fr;
+}
+
+.view-panel {
+    background: #f0f0f0;
+    padding: 8px;
+    border-bottom: 2px solid #ccc;
+}
+
+.view-panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    background: #333;
+    color: white;
+    font-size: 12px;
+}
+
+.view-versions {
+    display: grid;
+    gap: 8px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.view-version {
+    padding: 8px;
+    background: white;
+    border: 1px solid #999;
+}
+
+.view-version-heading {
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.view-summary {
+    padding: 6px 0;
+    font-size: 11px;
+    color: #555;
+}
+
+.view-wagons {
+    display: grid;
+    gap: 4px;
+}
+
+.view-wagon {
+    padding: 7px;
+    background: #e8f4e8;
+    border-left: 4px solid #8bc34a;
+    font-size: 11px;
+}
+
+.view-wagon strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
 .grid-section {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

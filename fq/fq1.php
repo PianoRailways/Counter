@@ -100,8 +100,17 @@
             <button class="button-small">1./2.</button>
             <button class="button-small">Ausl</button>
             <button class="button-small" id="remarque-button">Remarque</button>
-            <button class="button-small">View</button>
+            <button class="button-small" id="view-button" type="button">View</button>
         </div>
+
+        <!-- Read-only view of saved trains -->
+        <section class="view-panel" id="view-panel" hidden>
+            <div class="view-panel-header">
+                <strong>Gespeicherte Züge</strong>
+                <span id="view-status">Lade Daten ...</span>
+            </div>
+            <div class="view-versions" id="view-versions"></div>
+        </section>
 
         <!-- Grid Section -->
         <div class="grid-section">
@@ -241,11 +250,17 @@
     </div>
 
     <script>
+        const countKeys = ['A', 'B', 'WR', 'VELO', 'DOG', 'SKUUTER', 'KIWA', 'BEHIG'];
+
+        function createEmptyCounts() {
+            return Object.fromEntries(countKeys.map(key => [key, 0]));
+        }
+
         let currentWagen = 1;
         let wagen = {
-            1: { klasse: '2', abteilung: '↓' },
-            2: { klasse: '2', abteilung: '—' },
-            3: { klasse: '1', abteilung: '↑' }
+            1: { klasse: '2', abteilung: '↓', counts: createEmptyCounts() },
+            2: { klasse: '2', abteilung: '—', counts: createEmptyCounts() },
+            3: { klasse: '1', abteilung: '↑', counts: createEmptyCounts() }
         };
 
         const abteilungElement = document.getElementById('abteilung');
@@ -255,6 +270,11 @@
         const kategorieElement = document.getElementById('kategorie');
         const fahrtzeugtypElement = document.getElementById('fahrtzeugtyp');
         const saveButtonElement = document.getElementById('save-button');
+        const viewButtonElement = document.getElementById('view-button');
+        const viewPanelElement = document.getElementById('view-panel');
+        const viewVersionsElement = document.getElementById('view-versions');
+        const viewStatusElement = document.getElementById('view-status');
+        let isViewMode = false;
         let dragStartX = 0;
         let dragStartScrollLeft = 0;
         let isDraggingWagenSlider = false;
@@ -387,7 +407,7 @@
             list.classList.toggle('visible', suggestions.length > 0);
         }
 
-        const countValues = { A: 0, B: 0, WR: 0, VELO: 0, DOG: 0, SKUUTER: 0, KIWA: 0, BEHIG: 0 };
+        const countValues = createEmptyCounts();
         let activeCountKey = null;
         const gridSectionElement = document.querySelector('.grid-section');
         const countPanelElement = document.getElementById('count-panel');
@@ -399,6 +419,15 @@
             document.querySelectorAll('[data-count-key]').forEach(button => {
                 button.querySelector('strong').textContent = countValues[button.dataset.countKey];
             });
+        }
+
+        function syncCountValuesToWagen() {
+            wagen[currentWagen].counts = { ...countValues };
+        }
+
+        function loadCountValuesForWagen() {
+            Object.assign(countValues, createEmptyCounts(), wagen[currentWagen].counts || {});
+            renderCountValues();
         }
 
         function openCountPanel(key) {
@@ -415,6 +444,7 @@
             const pendingAmount = Number.parseInt(countInputElement.value, 10);
             if (activeCountKey && Number.isFinite(pendingAmount) && pendingAmount >= 0) {
                 countValues[activeCountKey] += pendingAmount;
+                syncCountValuesToWagen();
                 renderCountValues();
             }
             activeCountKey = null;
@@ -429,6 +459,7 @@
             countValues[activeCountKey] = operation === 'add'
                 ? countValues[activeCountKey] + amount
                 : Math.max(0, countValues[activeCountKey] - amount);
+            syncCountValuesToWagen();
             countPanelValueElement.textContent = countValues[activeCountKey];
             countInputElement.value = '';
             renderCountValues();
@@ -446,12 +477,14 @@
         document.getElementById('count-reset').addEventListener('click', () => {
             if (!activeCountKey) return;
             countValues[activeCountKey] = 0;
+            syncCountValuesToWagen();
             countPanelValueElement.textContent = '0';
             renderCountValues();
         });
 
         document.getElementById('count-close').addEventListener('click', closeCountPanel);
         document.getElementById('count-next').addEventListener('click', closeCountPanel);
+        loadCountValuesForWagen();
         renderCountValues();
 
         function updateDisplay() {
@@ -487,6 +520,7 @@
                         return;
                     }
                     currentWagen = wagenNummer;
+                    loadCountValuesForWagen();
                     updateDisplay();
                 });
                 wagenTrackElement.appendChild(wagenButton);
@@ -557,7 +591,9 @@
             const wagenNummern = Object.keys(wagen).map(Number).sort((a, b) => a - b);
             const aktuellerIndex = wagenNummern.indexOf(currentWagen);
             if (aktuellerIndex > 0) {
+                syncCountValuesToWagen();
                 currentWagen = wagenNummern[aktuellerIndex - 1];
+                loadCountValuesForWagen();
                 updateDisplay();
             }
         });
@@ -565,9 +601,11 @@
         document.getElementById('wagen-next').addEventListener('click', () => {
             const nextWagen = currentWagen + 1;
             if (!wagen[nextWagen]) {
-                wagen[nextWagen] = { klasse: '?', abteilung: '—', remarque: '' };
+                wagen[nextWagen] = { klasse: '?', abteilung: '—', remarque: '', counts: createEmptyCounts() };
             }
+            syncCountValuesToWagen();
             currentWagen = nextWagen;
+            loadCountValuesForWagen();
             updateDisplay();
         });
 
@@ -595,6 +633,7 @@
         });
 
         function createExportPayload() {
+            syncCountValuesToWagen();
             const stationInputs = {
                 from: document.getElementById('in-station').value.trim(),
                 to: document.getElementById('out-station').value.trim()
@@ -607,7 +646,10 @@
                 stations: stationInputs,
                 counts: { ...countValues },
                 currentWagen,
-                wagen: Object.fromEntries(Object.entries(wagen).map(([number, data]) => [number, { ...data }]))
+                wagen: Object.fromEntries(Object.entries(wagen).map(([number, data]) => [number, {
+                    ...data,
+                    counts: { ...(data.counts || createEmptyCounts()) }
+                }]))
             };
         }
 
@@ -635,6 +677,76 @@
             } finally {
                 saveButtonElement.disabled = false;
             }
+        });
+
+        function renderSavedVersions(versions) {
+            viewVersionsElement.replaceChildren();
+            if (!versions.length) {
+                viewStatusElement.textContent = 'Keine gespeicherten Züge';
+                return;
+            }
+
+            viewStatusElement.textContent = `${versions.length} Version${versions.length === 1 ? '' : 'en'}`;
+            versions.forEach(version => {
+                const payload = version.payload || {};
+                const versionElement = document.createElement('article');
+                versionElement.className = 'view-version';
+
+                const heading = document.createElement('div');
+                heading.className = 'view-version-heading';
+                heading.textContent = `Version ${version.version} · ${version.createdAt || ''}`;
+                versionElement.appendChild(heading);
+
+                const summary = document.createElement('div');
+                summary.className = 'view-summary';
+                summary.textContent = `${payload.tripNumber || '-'} · ${payload.category || '-'} · ${payload.vehicleType || '-'} · ${payload.stations?.from || '-'} → ${payload.stations?.to || '-'}`;
+                versionElement.appendChild(summary);
+
+                const wagonList = document.createElement('div');
+                wagonList.className = 'view-wagons';
+                Object.entries(payload.wagen || {}).forEach(([number, wagonData]) => {
+                    const wagonElement = document.createElement('section');
+                    wagonElement.className = 'view-wagon';
+
+                    const wagonHeading = document.createElement('strong');
+                    wagonHeading.textContent = `Wagen ${number} · Klasse ${wagonData.klasse || '-'}`;
+                    wagonElement.appendChild(wagonHeading);
+
+                    const counts = wagonData.counts || payload.counts || {};
+                    const countText = Object.entries(counts)
+                        .filter(([, value]) => Number(value) !== 0)
+                        .map(([key, value]) => `${key}: ${value}`)
+                        .join(', ') || 'Keine Auslastungsdaten';
+                    const details = document.createElement('div');
+                    details.textContent = `${countText} · Abteilung: ${wagonData.abteilung || '-'}${wagonData.remarque ? ` · Remarque: ${wagonData.remarque}` : ''}`;
+                    wagonElement.appendChild(details);
+                    wagonList.appendChild(wagonElement);
+                });
+                versionElement.appendChild(wagonList);
+                viewVersionsElement.appendChild(versionElement);
+            });
+        }
+
+        async function loadSavedVersions() {
+            viewStatusElement.textContent = 'Lade Daten ...';
+            try {
+                const response = await fetch('fq_data.php', { cache: 'no-store' });
+                const result = await response.json();
+                if (!response.ok || !result.ok) throw new Error(result.error || 'Laden fehlgeschlagen.');
+                renderSavedVersions(result.versions || []);
+            } catch (error) {
+                console.error(error);
+                viewStatusElement.textContent = 'Daten konnten nicht geladen werden';
+                viewVersionsElement.replaceChildren();
+            }
+        }
+
+        viewButtonElement.addEventListener('click', () => {
+            isViewMode = !isViewMode;
+            document.querySelector('.panel-container').classList.toggle('view-mode', isViewMode);
+            viewPanelElement.hidden = !isViewMode;
+            viewButtonElement.textContent = isViewMode ? 'Eingabe' : 'View';
+            if (isViewMode) loadSavedVersions();
         });
 
         // Wagenklasse Modal Options
