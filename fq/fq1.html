@@ -184,7 +184,7 @@
             
             <button class="key" id="vehicle-keyboard">abc</button>
             <button class="key number-key">0</button>
-            <button class="key function">Hafas-Zuglauf</button>
+            <button class="key function nofunction">Hafas-Zuglauf</button>
             
             <button class="key function" style="grid-column: 1 / 5; margin-top: 8px;">Enter</button>
         </div>
@@ -306,6 +306,7 @@
         const viewVersionsElement = document.getElementById('view-versions');
         const viewStatusElement = document.getElementById('view-status');
         let isViewMode = false;
+        let editingVersion = null;
         let dragStartX = 0;
         let dragStartScrollLeft = 0;
         let isDraggingWagenSlider = false;
@@ -724,6 +725,7 @@
                 vehicleType: fahrtzeugtypElement.value,
                 stations: stationInputs,
                 counts: { ...countValues },
+                editVersion: editingVersion,
                 currentWagen,
                 wagen: Object.fromEntries(Object.entries(wagen).map(([number, data]) => [number, {
                     ...data,
@@ -746,6 +748,7 @@
             currentWagen = null;
             wagen = {};
             currentDeck = null;
+            editingVersion = null;
             Object.assign(countValues, createEmptyCounts());
             activeCountKey = null;
             countInputElement.value = '';
@@ -867,8 +870,42 @@
                     wagonList.appendChild(wagonElement);
                 });
                 versionElement.appendChild(wagonList);
+
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.className = 'button-small';
+                editButton.textContent = 'Bearbeiten';
+                editButton.addEventListener('click', () => editSavedVersion(version));
+                versionElement.appendChild(editButton);
                 viewVersionsElement.appendChild(versionElement);
             });
+        }
+
+        function editSavedVersion(version) {
+            const payload = version.payload || {};
+            editingVersion = version.version;
+            fahrtnummerElement.value = payload.tripNumber || '';
+            kategorieElement.querySelector('strong').textContent = payload.category || 'Cat.';
+            fahrtzeugtypElement.value = payload.vehicleType || '';
+            document.getElementById('in-station').value = payload.stations?.from || '';
+            document.getElementById('out-station').value = payload.stations?.to || '';
+
+            wagen = JSON.parse(JSON.stringify(payload.wagen || {}));
+            const wagenNummern = Object.keys(wagen).map(Number).sort((a, b) => a - b);
+            currentWagen = payload.currentWagen ?? wagenNummern[0] ?? null;
+            currentDeck = currentWagen !== null
+                ? Object.keys(wagen[currentWagen]?.decks || {})[0] || null
+                : null;
+            Object.assign(countValues, createEmptyCounts(), payload.counts || {});
+            if (currentDeck) loadCountValuesForWagen();
+            renderCountValues();
+            updateDisplay();
+
+            isViewMode = false;
+            document.querySelector('.panel-container').classList.remove('view-mode');
+            viewPanelElement.hidden = true;
+            viewButtonElement.textContent = 'View';
+            fahrtnummerElement.focus();
         }
 
         async function loadSavedVersions() {

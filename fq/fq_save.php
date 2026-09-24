@@ -44,24 +44,44 @@ try {
     );
 
     $database->beginTransaction();
-    $nextVersion = (int) $database->query('SELECT COALESCE(MAX(version_no), 0) + 1 FROM fq_versions')->fetchColumn();
+    $editVersion = $payload['editVersion'] ?? null;
+    if ($editVersion !== null && (!is_int($editVersion) && !ctype_digit((string) $editVersion))) {
+        throw new InvalidArgumentException('Ungültige Versionsnummer.');
+    }
+
+    $version = $editVersion === null
+        ? (int) $database->query('SELECT COALESCE(MAX(version_no), 0) + 1 FROM fq_versions')->fetchColumn()
+        : (int) $editVersion;
     $createdAt = gmdate('c');
-    $payload['version'] = $nextVersion;
+    $payload['version'] = $version;
     $payload['createdAt'] = $createdAt;
 
-    $statement = $database->prepare(
-        'INSERT INTO fq_versions (version_no, created_at, payload_json) VALUES (:version_no, :created_at, :payload_json)'
-    );
+    $payloadJson = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    if ($editVersion !== null) {
+        $exists = $database->prepare('SELECT 1 FROM fq_versions WHERE version_no = :version_no');
+        $exists->execute([':version_no' => $version]);
+        if (!$exists->fetchColumn()) {
+            throw new InvalidArgumentException('Die zu bearbeitende Version wurde nicht gefunden.');
+        }
+
+        $statement = $database->prepare(
+            'UPDATE fq_versions SET created_at = :created_at, payload_json = :payload_json WHERE version_no = :version_no'
+        );
+    } else {
+        $statement = $database->prepare(
+            'INSERT INTO fq_versions (version_no, created_at, payload_json) VALUES (:version_no, :created_at, :payload_json)'
+        );
+    }
     $statement->execute([
-        ':version_no' => $nextVersion,
+        ':version_no' => $version,
         ':created_at' => $createdAt,
-        ':payload_json' => json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+        ':payload_json' => $payloadJson,
     ]);
     $database->commit();
 
     echo json_encode([
         'ok' => true,
-        'version' => $nextVersion,
+        'version' => $version,
         'createdAt' => $createdAt,
     ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $error) {
