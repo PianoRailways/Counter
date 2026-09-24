@@ -621,7 +621,7 @@ body {
 .count-close {
     grid-column: 2;
     min-height: 29px;
-    background: #333;
+    background: #eb0000;
     color: white;
 }
 
