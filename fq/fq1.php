@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FQ Panel">
     <meta name="theme-color" content="#333">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="favicon" href="fq.png">
+    <link rel="shortcut icon" href="fq.png" type="image/png">
+    
+    <!-- Apple Touch Icon (für iOS Home Screen) -->
+    <link rel="apple-touch-icon" href="fq.png">
+    
+    <!-- Web App Manifest für Android -->
+    <link rel="manifest" href="fq.png">
     <title>FQ Panel</title>
         <script>
             const abbrevMap = {};
