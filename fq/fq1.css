@@ -153,45 +153,56 @@ body {
     color: #333;
 }
 
-.wagen-button.klasse-2 {
+.wagen-button.klasse-2,
+.modal-option[data-value="2"] {
     background: var(--c2);
     color: white;
 }
 
-.wagen-button.klasse-1 {
+.wagen-button.klasse-1,
+.modal-option[data-value="1"] {
     background: var(--c1);
 }
 
-.wagen-button.klasse-12 {
+.wagen-button.klasse-12,
+.modal-option[data-value="12"] {
     background: #ffb347;
 }
 
-.wagen-button.klasse-wr {
+.wagen-button.klasse-wr,
+.modal-option[data-value="WR"] {
     background: var(--wr);
     color: white;
 }
-.wagen-button.klasse-fw {
+.wagen-button.klasse-fw,
+.modal-option[data-value="FW"] {
     background: #325ecd;
     color: white;
 }
 
-.wagen-button.klasse-wl {
+.wagen-button.klasse-wl,
+.modal-option[data-value="WL"] {
     background: #8ecae6;
 }
 
-.wagen-button.klasse-lok {
+.wagen-button.klasse-lok,
+.modal-option[data-value="Lok"] {
     background: black;
+    color: white;
 }
-.wagen-button.klasse-nogangway {
+.wagen-button.klasse-nogangway,
+.modal-option[data-value="-"] {
     background: black;
     color: red;
 }
 
-.wagen-button.klasse-d {
+.wagen-button.klasse-d,
+.modal-option[data-value="D"] {
     background: #c9daf8;
 }
 
-.wagen-button.klasse-cc {
+.wagen-button.klasse-cc,
+.modal-option[data-value="CC"] {
     background: #d9d2e9;
 }
 
