@@ -305,6 +305,8 @@
         const viewPanelElement = document.getElementById('view-panel');
         const viewVersionsElement = document.getElementById('view-versions');
         const viewStatusElement = document.getElementById('view-status');
+        const editPassword = new URLSearchParams(window.location.search).get('pw');
+        const canEditSavedVersions = editPassword === 'kaunter';
         let isViewMode = false;
         let editingVersion = null;
         let dragStartX = 0;
@@ -726,6 +728,7 @@
                 stations: stationInputs,
                 counts: { ...countValues },
                 editVersion: editingVersion,
+                editPassword: editingVersion !== null ? editPassword : null,
                 currentWagen,
                 wagen: Object.fromEntries(Object.entries(wagen).map(([number, data]) => [number, {
                     ...data,
@@ -871,17 +874,20 @@
                 });
                 versionElement.appendChild(wagonList);
 
-                const editButton = document.createElement('button');
-                editButton.type = 'button';
-                editButton.className = 'button-small';
-                editButton.textContent = 'Bearbeiten';
-                editButton.addEventListener('click', () => editSavedVersion(version));
-                versionElement.appendChild(editButton);
+                if (canEditSavedVersions) {
+                    const editButton = document.createElement('button');
+                    editButton.type = 'button';
+                    editButton.className = 'button-small';
+                    editButton.textContent = 'Bearbeiten';
+                    editButton.addEventListener('click', () => editSavedVersion(version));
+                    versionElement.appendChild(editButton);
+                }
                 viewVersionsElement.appendChild(versionElement);
             });
         }
 
         function editSavedVersion(version) {
+            if (!canEditSavedVersions) return;
             const payload = version.payload || {};
             editingVersion = version.version;
             fahrtnummerElement.value = payload.tripNumber || '';

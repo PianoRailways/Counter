@@ -48,6 +48,10 @@ try {
     if ($editVersion !== null && (!is_int($editVersion) && !ctype_digit((string) $editVersion))) {
         throw new InvalidArgumentException('Ungültige Versionsnummer.');
     }
+    if ($editVersion !== null && ($payload['editPassword'] ?? null) !== 'kaunter') {
+        throw new InvalidArgumentException('Bearbeiten ist nicht erlaubt.');
+    }
+    unset($payload['editVersion'], $payload['editPassword']);
 
     $version = $editVersion === null
         ? (int) $database->query('SELECT COALESCE(MAX(version_no), 0) + 1 FROM fq_versions')->fetchColumn()
