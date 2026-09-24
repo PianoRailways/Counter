@@ -149,7 +149,7 @@
                     <span id="count-panel-title">A</span>
                     <strong id="count-panel-value">0</strong>
                 </div>
-                <input id="count-input" class="count-input" type="number" inputmode="numeric" min="0" placeholder="Zahl eingeben">
+                <input id="count-input" class="count-input" type="number" inputmode="numeric" min="0" readonly placeholder="Zahl eingeben">
                 <div class="count-actions">
                     <button type="button" class="count-action add" data-count-operation="add">+ Addieren</button>
                     <button type="button" class="count-action subtract" data-count-operation="subtract">− Subtrahieren</button>
