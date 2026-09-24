@@ -69,7 +69,7 @@
     <div class="panel-container">
         <!-- Header with Wagenklasse -->
         <div class="panel-header">
-            <button class="nav-btn" id="wagen-prev" aria-label="Zum vorherigen Wagen">-Wg</button>
+            <button class="nav-btn" id="wagen-prev" aria-label="Zum vorherigen Wagen">&lt;Wg</button>
             <div class="wagen-slider">
                 <div class="wagen-track" id="wagen-track"></div>
             </div>
