@@ -111,8 +111,8 @@
 
         <!-- Button Row -->
         <div class="button-row">
-            <button class="button-small">1./2.</button>
-            <button class="button-small">Ausl</button>
+            <button class="button-small nofunction">1./2.</button>
+            <button class="button-small nofunction">Ausl</button>
             <button class="button-small" id="remarque-button">Remarque</button>
             <button class="button-small" id="view-button" type="button">View</button>
         </div>
