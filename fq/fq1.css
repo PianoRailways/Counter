@@ -509,6 +509,17 @@ body {
     color: #555;
 }
 
+.delete-saved-button {
+    margin-left: 4px;
+    background: #f4cccc;
+    border-color: #cc0000;
+    color: #990000;
+}
+
+.delete-saved-button:hover {
+    background: #ea9999;
+}
+
 .view-wagons {
     display: grid;
     gap: 4px;

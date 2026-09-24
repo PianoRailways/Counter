@@ -274,6 +274,17 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="saved-delete-modal">
+        <div class="modal">
+            <div class="modal-title">Fahrt wirklich löschen?</div>
+            <div id="saved-delete-text">Diese gespeicherte Fahrt wird gelöscht.</div>
+            <div class="modal-close">
+                <button type="button" id="saved-delete-cancel">Abbrechen</button>
+                <button type="button" id="saved-delete-confirm">Löschen</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const countKeys = ['A', 'B', 'WR', 'VELO', 'DOG', 'SKUUTER', 'KIWA', 'BEHIG'];
         const deckNames = ['Unterdeck', 'Zwischendeck (EG)', 'Oberdeck'];
@@ -315,6 +326,7 @@
         let savedVersions = [];
         let isViewMode = false;
         let editingVersion = null;
+        let deletingVersion = null;
         let dragStartX = 0;
         let dragStartScrollLeft = 0;
         let isDraggingWagenSlider = false;
@@ -899,6 +911,13 @@
                     editButton.textContent = 'Bearbeiten';
                     editButton.addEventListener('click', () => editSavedVersion(version));
                     versionElement.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.className = 'button-small delete-saved-button';
+                    deleteButton.textContent = 'Löschen';
+                    deleteButton.addEventListener('click', () => confirmDeleteSavedVersion(version));
+                    versionElement.appendChild(deleteButton);
                 }
                 viewVersionsElement.appendChild(versionElement);
             });
@@ -940,6 +959,43 @@
             viewButtonElement.textContent = 'View';
             fahrtnummerElement.focus();
         }
+
+        function confirmDeleteSavedVersion(version) {
+            if (!canEditSavedVersions) return;
+            deletingVersion = version.version;
+            const payload = version.payload || {};
+            document.getElementById('saved-delete-text').textContent =
+                `Fahrt ${payload.tripNumber || '-'} wirklich löschen?`;
+            openModal('saved-delete-modal');
+        }
+
+        document.getElementById('saved-delete-cancel').addEventListener('click', () => {
+            deletingVersion = null;
+            closeModal('saved-delete-modal');
+        });
+
+        document.getElementById('saved-delete-confirm').addEventListener('click', async () => {
+            if (!canEditSavedVersions || deletingVersion === null) return;
+            const confirmButton = document.getElementById('saved-delete-confirm');
+            confirmButton.disabled = true;
+            try {
+                const response = await fetch('fq_delete.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ version: deletingVersion, password: editPassword })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.ok) throw new Error(result.error || 'Löschen fehlgeschlagen.');
+                deletingVersion = null;
+                closeModal('saved-delete-modal');
+                await loadSavedVersions();
+            } catch (error) {
+                console.error(error);
+                alert('Die Fahrt konnte nicht gelöscht werden.');
+            } finally {
+                confirmButton.disabled = false;
+            }
+        });
 
         async function loadSavedVersions() {
             viewStatusElement.textContent = 'Lade Daten ...';
