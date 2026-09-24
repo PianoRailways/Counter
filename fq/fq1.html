@@ -123,6 +123,10 @@
                 <strong>Gespeicherte Züge</strong>
                 <span id="view-status">Lade Daten ...</span>
             </div>
+            <label class="view-search">
+                <span>Suche</span>
+                <input id="view-search-input" type="search" placeholder="Zugnummer oder Datum">
+            </label>
             <div class="view-versions" id="view-versions"></div>
         </section>
 
@@ -305,8 +309,10 @@
         const viewPanelElement = document.getElementById('view-panel');
         const viewVersionsElement = document.getElementById('view-versions');
         const viewStatusElement = document.getElementById('view-status');
+        const viewSearchInputElement = document.getElementById('view-search-input');
         const editPassword = new URLSearchParams(window.location.search).get('pw');
         const canEditSavedVersions = editPassword === 'kaunter';
+        let savedVersions = [];
         let isViewMode = false;
         let editingVersion = null;
         let dragStartX = 0;
@@ -800,9 +806,9 @@
                     throw new Error(`Ungültige Serverantwort (${response.status}).`);
                 }
                 if (!response.ok || !result.ok) throw new Error(result.error || 'Speichern fehlgeschlagen.');
-                saveButtonElement.title = `Gespeichert: Version ${result.version}`;
+                saveButtonElement.title = 'Gespeichert';
                 resetForm();
-                alert(`Gespeichert als Version ${result.version}`);
+                alert('Gespeichert');
             } catch (error) {
                 console.error(error);
                 alert('Die Daten konnten nicht gespeichert werden.');
@@ -813,25 +819,37 @@
 
         function renderSavedVersions(versions) {
             viewVersionsElement.replaceChildren();
-            if (!versions.length) {
-                viewStatusElement.textContent = 'Keine gespeicherten Züge';
+            const searchTerm = viewSearchInputElement.value.trim().toLowerCase();
+            const filteredVersions = versions.filter(version => {
+                if (!searchTerm) return true;
+                const payload = version.payload || {};
+                const formattedDate = formatViewDate(version.createdAt);
+                const searchableText = [payload.tripNumber, version.createdAt, formattedDate]
+                    .filter(Boolean)
+                    .join(' ')
+                    .toLowerCase();
+                return searchableText.includes(searchTerm);
+            });
+
+            if (!filteredVersions.length) {
+                viewStatusElement.textContent = searchTerm ? 'Keine Treffer' : 'Keine gespeicherten Züge';
                 return;
             }
 
-            viewStatusElement.textContent = `${versions.length} Version${versions.length === 1 ? '' : 'en'}`;
-            versions.forEach(version => {
+            viewStatusElement.textContent = `${filteredVersions.length} Fahrt${filteredVersions.length === 1 ? '' : 'en'}`;
+            filteredVersions.forEach(version => {
                 const payload = version.payload || {};
                 const versionElement = document.createElement('article');
                 versionElement.className = 'view-version';
 
                 const heading = document.createElement('div');
                 heading.className = 'view-version-heading';
-                heading.textContent = `Version ${version.version} · ${version.createdAt || ''}`;
+                heading.textContent = `${payload.category || '-'} | ${payload.tripNumber || '-'} | ${formatViewDate(version.createdAt)}`;
                 versionElement.appendChild(heading);
 
                 const summary = document.createElement('div');
                 summary.className = 'view-summary';
-                summary.textContent = `${payload.tripNumber || '-'} · ${payload.category || '-'} · ${payload.vehicleType || '-'} · ${payload.stations?.from || '-'} → ${payload.stations?.to || '-'}`;
+                summary.textContent = `${payload.stations?.from || '-'} → ${payload.stations?.to || '-'} | ${payload.vehicleType || '-'}`;
                 versionElement.appendChild(summary);
 
                 const wagonList = document.createElement('div');
@@ -886,6 +904,15 @@
             });
         }
 
+        function formatViewDate(value) {
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return value || '-';
+            const year = String(date.getFullYear()).slice(-2);
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${date.getDate()}.${date.getMonth() + 1}.${year} ${hours}:${minutes}`;
+        }
+
         function editSavedVersion(version) {
             if (!canEditSavedVersions) return;
             const payload = version.payload || {};
@@ -920,13 +947,16 @@
                 const response = await fetch('fq_data.php', { cache: 'no-store' });
                 const result = await response.json();
                 if (!response.ok || !result.ok) throw new Error(result.error || 'Laden fehlgeschlagen.');
-                renderSavedVersions(result.versions || []);
+                savedVersions = result.versions || [];
+                renderSavedVersions(savedVersions);
             } catch (error) {
                 console.error(error);
                 viewStatusElement.textContent = 'Daten konnten nicht geladen werden';
                 viewVersionsElement.replaceChildren();
             }
         }
+
+        viewSearchInputElement.addEventListener('input', () => renderSavedVersions(savedVersions));
 
         viewButtonElement.addEventListener('click', () => {
             isViewMode = !isViewMode;
