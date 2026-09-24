@@ -723,6 +723,35 @@
             };
         }
 
+        function resetForm() {
+            fahrtnummerElement.value = '';
+            fahrtnummerElement.classList.remove('active-input');
+            kategorieElement.querySelector('strong').textContent = 'Cat.';
+            fahrtzeugtypElement.value = '';
+            document.getElementById('in-station').value = '';
+            document.getElementById('out-station').value = '';
+            remarqueInputElement.value = '';
+
+            currentWagen = null;
+            wagen = {};
+            currentDeck = null;
+            Object.assign(countValues, createEmptyCounts());
+            activeCountKey = null;
+            countInputElement.value = '';
+            countPanelElement.hidden = true;
+            gridSectionElement.classList.remove('count-mode');
+            renderCountValues();
+            updateDisplay();
+
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            isViewMode = false;
+            document.querySelector('.panel-container').classList.remove('view-mode');
+            viewPanelElement.hidden = true;
+            viewButtonElement.textContent = 'View';
+        }
+
         saveButtonElement.addEventListener('click', async () => {
             if (!fahrtnummerElement.value.trim()) {
                 alert('Bitte zuerst eine Fahrtnummer eingeben.');
@@ -745,6 +774,7 @@
                 }
                 if (!response.ok || !result.ok) throw new Error(result.error || 'Speichern fehlgeschlagen.');
                 saveButtonElement.title = `Gespeichert: Version ${result.version}`;
+                resetForm();
                 alert(`Gespeichert als Version ${result.version}`);
             } catch (error) {
                 console.error(error);
