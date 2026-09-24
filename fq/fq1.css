@@ -539,12 +539,6 @@ body {
     transition: background 0.1s;
     user-select: none;
 }
-.nofunction {
-    background: #5e3333;
-    border-color: #999;
-    color: #999;
-    cursor: not-allowed;
-}
 
 .grid-cell:hover {
     background: #d0f0d0;
@@ -910,4 +904,15 @@ body {
 
 .modal-close button:hover {
     background: #ccc;
+}
+
+
+.nofunction {
+    background: #5e3333;
+    border-color: #999;
+    color: #999;
+    cursor: not-allowed;
+}
+.nofunction:hover {
+    background: #5e3333;
 }
