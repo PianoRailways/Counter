@@ -455,12 +455,13 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
-    gap: 3px;
+    gap: 2px;
     width: 100%;
     flex: 1;
-    padding: 8px;
+    padding: 4px;
     background: #ccff00;
     overflow: hidden;
+    min-height: 0;
 }
 
 .grid-section.count-mode {
@@ -477,13 +478,13 @@ body {
 
 .grid-cell {
     background: #e8f4e8;
-    border: 2px solid #ccff00;
-    padding: 12px;
+    border: 1px solid #ccff00;
+    padding: 6px 4px;
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     color: #333;
-    min-height: 50px;
+    min-height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -585,8 +586,8 @@ body {
 
 .control-bar {
     display: grid;
-    grid-template-columns: 60px 60px 40px 40px 40px 40px 40px;
-    gap: 4px;
+    grid-template-columns: 60px 60px 36px 40px 40px 30px 30px;
+    gap: 3px;
     padding: 6px;
     background: #f0f0f0;
     border-bottom: 2px solid #ccc;
@@ -663,6 +664,14 @@ body {
     padding: 8px;
     background: #333;
     flex-shrink: 0;
+    transition: max-height 0.2s, opacity 0.2s;
+    overflow: hidden;
+}
+
+.keyboard.hidden {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
 }
 
 .key {

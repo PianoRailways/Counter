@@ -163,7 +163,7 @@
         <div class="control-bar">
             <button class="control-field" id="abteilung">Stockwerk</button>
             <button class="control-field fq">2/100</button>
-            <button class="control-field">1x</button>
+            <button class="control-field" id="keyboard-toggle" type="button" title="Tastatur an/aus">⌨</button>
             <button class="star-icon" id="save-button" type="button" aria-label="FQ speichern" title="FQ speichern">&#128190;</button>
             <button class="control-field highlight">ASP</button>
             <button class="control-field">1</button>
@@ -889,6 +889,16 @@
                     closeModal(modal.id);
                 }
             });
+        });
+
+        const keyboardElement = document.querySelector('.keyboard');
+        const keyboardToggleButton = document.getElementById('keyboard-toggle');
+        let keyboardVisible = true;
+
+        keyboardToggleButton.addEventListener('click', () => {
+            keyboardVisible = !keyboardVisible;
+            keyboardElement.classList.toggle('hidden', !keyboardVisible);
+            keyboardToggleButton.style.background = keyboardVisible ? '' : '#ff9999';
         });
 
         initializeDataInputs();
