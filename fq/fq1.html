@@ -125,7 +125,7 @@
             </div>
             <label class="view-search">
                 <span>Suche</span>
-                <input id="view-search-input" type="search" placeholder="Zugnummer oder Datum">
+                <input id="view-search-input" type="search" placeholder="Zugnummer, Datum, Start, Ziel oder Fahrzeugtyp">
             </label>
             <div class="view-versions" id="view-versions"></div>
         </section>
@@ -884,7 +884,14 @@
                 if (!searchTerm) return true;
                 const payload = version.payload || {};
                 const formattedDate = formatViewDate(version.createdAt);
-                const searchableText = [payload.tripNumber, version.createdAt, formattedDate]
+                const searchableText = [
+                    payload.tripNumber,
+                    version.createdAt,
+                    formattedDate,
+                    payload.stations?.from,
+                    payload.stations?.to,
+                    payload.vehicleType
+                ]
                     .filter(Boolean)
                     .join(' ')
                     .toLowerCase();
@@ -919,7 +926,8 @@
                     wagonElement.className = 'view-wagon';
 
                     const wagonHeading = document.createElement('strong');
-                    wagonHeading.textContent = `Wagen ${number} · Klasse ${wagonData.klasse || '-'}`;
+                    const wagonNumber = String(wagonData.wgnr ?? '').trim();
+                    wagonHeading.textContent = `Wagen ${number}${wagonNumber ? ` (${wagonNumber})` : ''} · Klasse ${wagonData.klasse || '-'}`;
                     wagonElement.appendChild(wagonHeading);
 
                     const details = document.createElement('div');
