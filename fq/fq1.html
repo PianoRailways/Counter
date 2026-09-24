@@ -163,7 +163,7 @@
             <button class="star-icon" id="save-button" type="button" aria-label="FQ speichern" title="FQ speichern">&#128190;</button>
             <button class="control-field highlight">ASP</button>
             <button class="control-field nofunction">1</button>
-            <button class="control-field">Leer</button>
+            <button class="control-field" id="clear-button" type="button">Leer</button>
         </div>
 
         <!-- Keyboard -->
@@ -255,6 +255,17 @@
             <div class="modal-close">
                 <button type="button" id="remarque-cancel">Abbrechen</button>
                 <button type="button" id="remarque-save">Übernehmen</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="clear-modal">
+        <div class="modal">
+            <div class="modal-title">Fahrt löschen?</div>
+            <div>Alle aktuellen Eingaben werden gelöscht.</div>
+            <div class="modal-close">
+                <button type="button" id="clear-cancel">Abbrechen</button>
+                <button type="button" id="clear-confirm">Löschen</button>
             </div>
         </div>
     </div>
@@ -751,6 +762,16 @@
             viewPanelElement.hidden = true;
             viewButtonElement.textContent = 'View';
         }
+
+        document.getElementById('clear-button').addEventListener('click', () => {
+            openModal('clear-modal');
+        });
+
+        document.getElementById('clear-cancel').addEventListener('click', () => {
+            closeModal('clear-modal');
+        });
+
+        document.getElementById('clear-confirm').addEventListener('click', resetForm);
 
         saveButtonElement.addEventListener('click', async () => {
             if (!fahrtnummerElement.value.trim()) {
