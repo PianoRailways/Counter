@@ -908,7 +908,7 @@ body {
 
 
 .nofunction {
-    background: #5e3333;
+    background: #5e3333 !important;
     border-color: #999;
     color: #999;
     cursor: not-allowed;
