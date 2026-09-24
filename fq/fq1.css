@@ -64,7 +64,7 @@ body {
 .panel-header {
     display: flex;
     gap: 8px;
-    padding: 8px;
+    padding: 4px;
     background: #f0f0f0;
     border-bottom: 2px solid #ccc;
     font-size: 13px;
@@ -233,7 +233,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 50px 1fr;
     gap: 4px;
-    padding: 6px;
+    padding: 3px;
     background: #f0f0f0;
     border-bottom: 2px solid #ccc;
     font-size: 13px;
@@ -352,7 +352,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 4px;
-    padding: 8px;
+    padding: 4px;
     background: #f0f0f0;
     border-bottom: 2px solid #ccc;
     font-size: 11px;
