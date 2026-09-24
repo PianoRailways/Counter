@@ -109,6 +109,7 @@ body {
 }
 
 .wagen-button {
+    position: relative;
     flex: 0 0 56px;
     width: 56px;
     height: 36px;
@@ -120,6 +121,33 @@ body {
     user-select: none;
     transition: border-color 0.1s, box-shadow 0.1s;
     -webkit-user-select: none;
+}
+
+.wagen-number {
+    position: absolute;
+    right: 3px;
+    bottom: 1px;
+    font-size: 8px;
+    line-height: 1;
+    font-weight: normal;
+    color: inherit;
+}
+
+.wagen-number-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.wagen-number-field input {
+    width: 100%;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid #999;
+    font: inherit;
 }
 
 .wagen-button.selected {

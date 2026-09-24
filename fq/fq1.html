@@ -166,7 +166,7 @@
             <button class="control-field" id="keyboard-toggle" type="button" title="Tastatur an/aus">⌨</button>
             <button class="star-icon" id="save-button" type="button" aria-label="FQ speichern" title="FQ speichern">&#128190;</button>
             <button class="control-field highlight">ASP</button>
-            <button class="control-field nofunction">1</button>
+            <button class="control-field wgnr" id="wgnr-button" type="button">WG</button>
             <button class="control-field" id="clear-button" type="button">Leer</button>
         </div>
 
@@ -221,6 +221,10 @@
     <div class="modal-overlay" id="wagenklasse-modal">
         <div class="modal">
             <div class="modal-title">Wagenklasse</div>
+            <label class="wagen-number-field">
+                <span>Wagennummer</span>
+                <input id="wagen-number-input" type="text" inputmode="numeric" autocomplete="off" placeholder="optional">
+            </label>
             <div class="modal-option" data-value="2">2. Klasse (2)</div>
             <div class="modal-option" data-value="1">1. Klasse (1)</div>
             <div class="modal-option" data-value="12">1. und 2. Klasse (12)</div>
@@ -231,6 +235,9 @@
             <div class="modal-option" data-value="-">Kein Durchgang (-)</div>
             <div class="modal-option" data-value="D">Dienstwagen (D)</div>
             <div class="modal-option" data-value="CC">Cabin (CC)</div>
+            <div class="modal-close">
+                <button type="button" id="wagen-number-save">Übernehmen</button>
+            </div>
             <div class="modal-option delete-option" id="wagen-delete">Wagen löschen</div>
             <div class="modal-close">
                 <button onclick="closeModal('wagenklasse-modal')">Abbrechen</button>
@@ -297,6 +304,16 @@
             return { klasse: '?', decks: {} };
         }
 
+        function normalizeWagenNumber(value) {
+            return String(value ?? '').trim();
+        }
+
+        function isWagenNumberTaken(wagenNumber, exceptWagen) {
+            return Object.entries(wagen).some(([wagenIndex, wagenData]) =>
+                Number(wagenIndex) !== exceptWagen && normalizeWagenNumber(wagenData.wgnr) === wagenNumber
+            );
+        }
+
         let currentWagen = null;
         let wagen = {};
         let currentDeck = null;
@@ -315,6 +332,7 @@
         const fahrtnummerElement = document.getElementById('fahrtnummer');
         const kategorieElement = document.getElementById('kategorie');
         const fahrtzeugtypElement = document.getElementById('fahrtzeugtyp');
+        const wgnrButtonElement = document.getElementById('wgnr-button');
         const saveButtonElement = document.getElementById('save-button');
         const viewButtonElement = document.getElementById('view-button');
         const viewPanelElement = document.getElementById('view-panel');
@@ -570,6 +588,7 @@
                 'Oberdeck': '↑'
             };
             abteilungElement.textContent = currentDeck ? deckLabels[currentDeck] : (w ? 'Stockwerk' : '');
+            wgnrButtonElement.textContent = w?.wgnr || 'wgnr';
             renderWagenButtons();
         }
 
@@ -592,7 +611,13 @@
                 const wagenButton = document.createElement('button');
                 const klasse = wagen[wagenNummer].klasse || '?';
                 wagenButton.className = 'wagen-button ' + getKlasseClass(klasse);
-                wagenButton.textContent = klasse;
+                wagenButton.innerHTML = `<span>${klasse}</span>`;
+                if (normalizeWagenNumber(wagen[wagenNummer].wgnr)) {
+                    const wagenNumberElement = document.createElement('small');
+                    wagenNumberElement.className = 'wagen-number';
+                    wagenNumberElement.textContent = wagen[wagenNummer].wgnr;
+                    wagenButton.appendChild(wagenNumberElement);
+                }
                 wagenButton.dataset.wagen = wagenNummer;
                 wagenButton.setAttribute('aria-label', 'Wagen ' + wagenNummer + ', Klasse ' + klasse);
 
@@ -605,7 +630,7 @@
                         return;
                     }
                     if (wagenNummer === currentWagen) {
-                        openModal('wagenklasse-modal');
+                        openWagenklasseModal();
                         return;
                     }
                     syncCountValuesToWagen();
@@ -703,7 +728,30 @@
             currentDeck = Object.keys(wagen[currentWagen].decks || {})[0] || null;
             loadCountValuesForWagen();
             updateDisplay();
+            openWagenklasseModal();
+        });
+
+        const wagenNumberInputElement = document.getElementById('wagen-number-input');
+
+        function openWagenklasseModal() {
+            if (currentWagen === null) return;
+            wagenNumberInputElement.value = wagen[currentWagen]?.wgnr || '';
             openModal('wagenklasse-modal');
+        }
+
+        wgnrButtonElement.addEventListener('click', openWagenklasseModal);
+
+        document.getElementById('wagen-number-save').addEventListener('click', () => {
+            if (currentWagen === null) return;
+            const wagenNumber = normalizeWagenNumber(wagenNumberInputElement.value);
+            if (wagenNumber && isWagenNumberTaken(wagenNumber, currentWagen)) {
+                wagenNumberInputElement.value = wagen[currentWagen].wgnr || '';
+                alert('Diese Wagennummer ist in diesem Zug bereits vergeben.');
+                return;
+            }
+            wagen[currentWagen].wgnr = wagenNumber;
+            updateDisplay();
+            closeModal('wagenklasse-modal');
         });
 
         abteilungElement.addEventListener('click', () => {
@@ -1029,7 +1077,6 @@
                 if (currentWagen === null) return;
                 wagen[currentWagen].klasse = opt.dataset.value;
                 updateDisplay();
-                closeModal('wagenklasse-modal');
             });
         });
 
