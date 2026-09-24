@@ -182,6 +182,7 @@ body {
 }
 
 .wagen-button.klasse-2,
+.view-wagon.klasse-2,
 .modal-option[data-value="2"],
 .count-cell[data-count-key="B"] {
     background: var(--c2);
@@ -189,23 +190,27 @@ body {
 }
 
 .wagen-button.klasse-1,
+.view-wagon.klasse-1,
 .modal-option[data-value="1"],
 .count-cell[data-count-key="A"] {
     background: var(--c1);
 }
 
 .wagen-button.klasse-12,
+.view-wagon.klasse-12,
 .modal-option[data-value="12"] {
     background: #ffb347;
 }
 
 .wagen-button.klasse-wr,
+.view-wagon.klasse-wr,
 .modal-option[data-value="WR"],
 .count-cell[data-count-key="WR"] {
     background: var(--wr);
     color: white;
 }
 .wagen-button.klasse-fw,
+.view-wagon.klasse-fw,
 .modal-option[data-value="FW"],
 .count-cell[data-count-key="FW"] {
     background: #325ecd;
@@ -213,28 +218,33 @@ body {
 }
 
 .wagen-button.klasse-wl,
+.view-wagon.klasse-wl,
 .modal-option[data-value="WL"],
 .count-cell[data-count-key="WL"] {
     background: #8ecae6;
 }
 
 .wagen-button.klasse-lok,
+.view-wagon.klasse-lok,
 .modal-option[data-value="Lok"] {
     background: black;
     color: white;
 }
 .wagen-button.klasse-nogangway,
+.view-wagon.klasse-nogangway,
 .modal-option[data-value="-"] {
     background: black;
     color: red;
 }
 
 .wagen-button.klasse-d,
+.view-wagon.klasse-d,
 .modal-option[data-value="D"] {
     background: #c9daf8;
 }
 
 .wagen-button.klasse-cc,
+.view-wagon.klasse-cc,
 .modal-option[data-value="CC"] {
     background: #d9d2e9;
 }

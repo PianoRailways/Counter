@@ -923,7 +923,7 @@
                 wagonList.className = 'view-wagons';
                 Object.entries(payload.wagen || {}).forEach(([number, wagonData]) => {
                     const wagonElement = document.createElement('section');
-                    wagonElement.className = 'view-wagon';
+                    wagonElement.className = `view-wagon ${getKlasseClass(wagonData.klasse || '?')}`;
 
                     const wagonHeading = document.createElement('strong');
                     const wagonNumber = String(wagonData.wgnr ?? '').trim();
