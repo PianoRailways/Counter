@@ -69,7 +69,7 @@
     <div class="panel-container">
         <!-- Header with Wagenklasse -->
         <div class="panel-header">
-            <button class="nav-btn" id="wagen-prev" aria-label="Zum vorherigen Wagen">◀</button>
+            <button class="nav-btn" id="wagen-prev" aria-label="Zum vorherigen Wagen">-Wg</button>
             <div class="wagen-slider">
                 <div class="wagen-track" id="wagen-track"></div>
             </div>
@@ -128,19 +128,19 @@
 
         <!-- Grid Section -->
         <div class="grid-section">
-                <button class="grid-cell count-cell" data-count-key="A"><span>A</span><strong>0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell count-cell" data-count-key="B"><span>B</span><strong>0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell count-cell" data-count-key="WR"><span>WR</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="A"><span class="wg-counter-klasse">A</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="B"><span class="wg-counter-klasse">B</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="WR"><span class="wg-counter-klasse">WR</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
                 <button class="grid-cell nofunction">HR</button>
                 <button class="grid-cell nofunction">TK</button>
                 <button class="grid-cell nofunction">VERBUND</button>
                 <button class="grid-cell nofunction">1/2-ABO</button>
                 <button class="grid-cell nofunction">SPEZ</button>
-                <button class="grid-cell count-cell" data-count-key="VELO"><span>VELO</span><strong>0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell count-cell" data-count-key="SKUUTER"><span>SKUUTER</span><strong>0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell count-cell" data-count-key="KIWA"><span>KIWA</span><strong>0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell count-cell" data-count-key="BEHIG"><span>BEHIG</span><strong>0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell count-cell" data-count-key="DOG"><span>DOG</span><strong>0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="VELO"><span class="wg-counter-klasse">VELO</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="SKUUTER"><span class="wg-counter-klasse">SKUUTER</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="KIWA"><span class="wg-counter-klasse">KIWA</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="BEHIG"><span class="wg-counter-klasse">BEHIG</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
+                <button class="grid-cell count-cell" data-count-key="DOG"><span class="wg-counter-klasse">DOG</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
                 <button class="grid-cell nofunction">GA</button>
                 <button class="grid-cell nofunction">1/2</button>
                 <button class="grid-cell nofunction">FAMILIE</button>
