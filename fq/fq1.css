@@ -154,13 +154,15 @@ body {
 }
 
 .wagen-button.klasse-2,
-.modal-option[data-value="2"] {
+.modal-option[data-value="2"],
+.count-cell[data-count-key="B"] {
     background: var(--c2);
     color: white;
 }
 
 .wagen-button.klasse-1,
-.modal-option[data-value="1"] {
+.modal-option[data-value="1"],
+.count-cell[data-count-key="A"] {
     background: var(--c1);
 }
 
@@ -170,18 +172,21 @@ body {
 }
 
 .wagen-button.klasse-wr,
-.modal-option[data-value="WR"] {
+.modal-option[data-value="WR"],
+.count-cell[data-count-key="WR"] {
     background: var(--wr);
     color: white;
 }
 .wagen-button.klasse-fw,
-.modal-option[data-value="FW"] {
+.modal-option[data-value="FW"],
+.count-cell[data-count-key="FW"] {
     background: #325ecd;
     color: white;
 }
 
 .wagen-button.klasse-wl,
-.modal-option[data-value="WL"] {
+.modal-option[data-value="WL"],
+.count-cell[data-count-key="WL"] {
     background: #8ecae6;
 }
 
@@ -208,6 +213,15 @@ body {
 
 .wagen-button.klasse-unbekannt {
     background: white;
+}
+
+.count-cell[data-count-key="DOG"] {
+    background: var(--dog);
+    color: white;
+}
+.count-cell[data-count-key="VELO"] {
+    background: var(--bike);
+    color: white;
 }
 
 .nav-btn {
