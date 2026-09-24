@@ -242,9 +242,9 @@
     <div class="modal-overlay" id="abteilung-modal">
         <div class="modal">
             <div class="modal-title">Stockwerk</div>
-            <div class="modal-option" data-value="Unterdeck">↓</div>
-            <div class="modal-option" data-value="Zwischendeck (EG)">—</div>
             <div class="modal-option" data-value="Oberdeck">↑</div>
+            <div class="modal-option" data-value="Zwischendeck (EG)">—</div>
+            <div class="modal-option" data-value="Unterdeck">↓</div>
             <div class="modal-close">
                 <button onclick="closeModal('abteilung-modal')">Abbrechen</button>
             </div>
