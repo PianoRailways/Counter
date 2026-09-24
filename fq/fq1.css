@@ -236,6 +236,7 @@ body {
     background: black;
     color: red;
 }
+.wagen-button.klasse-nogangway {max-width:15px;border-radius:15px;}
 
 .wagen-button.klasse-d,
 .view-wagon.klasse-d,
