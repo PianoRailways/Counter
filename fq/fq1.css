@@ -89,7 +89,7 @@ body {
 
 .wagen-track {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px;
     min-width: max-content;
     padding: 2px;
@@ -244,7 +244,7 @@ body {
 .data-field {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     background: white;
     border: 1px solid #999;
     padding: 6px;
@@ -272,7 +272,15 @@ body {
     background: transparent;
     color: #222;
     font: inherit;
-    text-align: center;
+    text-align: left;
+}
+
+.select-field {
+    justify-content: center;
+}
+
+.function-field {
+    justify-content: center;
 }
 
 .input-field input:focus {
@@ -455,10 +463,10 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
-    gap: 2px;
+    gap: 3px;
     width: 100%;
     flex: 1;
-    padding: 4px;
+    padding: 8px;
     background: #ccff00;
     overflow: hidden;
     min-height: 0;
@@ -478,13 +486,13 @@ body {
 
 .grid-cell {
     background: #e8f4e8;
-    border: 1px solid #ccff00;
-    padding: 6px 4px;
+    border: 2px solid #ccff00;
+    padding: 12px;
     text-align: center;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
     color: #333;
-    min-height: auto;
+    min-height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
