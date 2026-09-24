@@ -131,10 +131,6 @@
                 <button class="grid-cell count-cell" data-count-key="A"><span class="wg-counter-klasse">A</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
                 <button class="grid-cell count-cell" data-count-key="B"><span class="wg-counter-klasse">B</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
                 <button class="grid-cell count-cell" data-count-key="WR"><span class="wg-counter-klasse">WR</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
-                <button class="grid-cell nofunction">HR</button>
-                <button class="grid-cell nofunction">TK</button>
-                <button class="grid-cell nofunction">VERBUND</button>
-                <button class="grid-cell nofunction">1/2-ABO</button>
                 <button class="grid-cell nofunction">SPEZ</button>
                 <button class="grid-cell count-cell" data-count-key="VELO"><span class="wg-counter-klasse">VELO</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
                 <button class="grid-cell count-cell" data-count-key="SKUUTER"><span class="wg-counter-klasse">SKUUTER</span><strong class="wg-counter-value">0</strong><small class="deck-counts"></small></button>
