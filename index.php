@@ -200,6 +200,7 @@ function renderSuggestions(el) {
             div.onpointerdown = function(e) {
                 e.preventDefault();
                 el.value = s.name;
+                saveState();
                 listContainer.style.display = 'none';
                 el.blur();
             };
