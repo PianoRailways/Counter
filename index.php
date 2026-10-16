@@ -77,6 +77,42 @@
     let stationIndex;
     let suggestionTimer;
 
+function getState() {
+    return {
+        data,
+        currentCar,
+        trainNumber: document.getElementById('trainNumber').value,
+        productID: document.getElementById('productID').value,
+        vehicleType: document.getElementById('vehicleType').value,
+        fromStation: document.getElementById('fromStation').value,
+        toStation: document.getElementById('toStation').value
+    };
+}
+
+function saveState() {
+    try {
+        localStorage.setItem('counterState', JSON.stringify(getState()));
+    } catch (error) {
+        console.warn('Zustand konnte nicht gespeichert werden.', error);
+    }
+}
+
+function restoreState() {
+    try {
+        const saved = localStorage.getItem('counterState');
+        if (!saved) return;
+        const state = JSON.parse(saved);
+        if (!Array.isArray(state.data) || !state.data.length) return;
+        data = state.data;
+        currentCar = Math.min(Math.max(Number(state.currentCar) || 1, 1), data.length);
+        ['trainNumber', 'productID', 'vehicleType', 'fromStation', 'toStation'].forEach(id => {
+            document.getElementById(id).value = typeof state[id] === 'string' ? state[id] : '';
+        });
+    } catch (error) {
+        console.warn('Gespeicherter Zustand konnte nicht geladen werden.', error);
+    }
+}
+
 function updateSuggestions(el) {
     window.clearTimeout(suggestionTimer);
     suggestionTimer = window.setTimeout(() => renderSuggestions(el), 80);
@@ -210,25 +246,32 @@ document.querySelectorAll('input').forEach(input => {
 
     function change(f, v) { 
         data[currentCar-1][f] = Math.max(0, data[currentCar-1][f] + v); 
+        saveState();
         render(); 
     }
 
     function next() { 
         currentCar++; 
         if(!data[currentCar-1]) data.push(emptyCar());
+        saveState();
         render(); 
     }
 
-    function prev() { if(currentCar > 1) { currentCar--; render(); } }
-    function updateComment() { data[currentCar-1].comments = document.getElementById('comments').value; }
+    function prev() { if(currentCar > 1) { currentCar--; saveState(); render(); } }
+    function updateComment() {
+        data[currentCar-1].comments = document.getElementById('comments').value;
+        saveState();
+    }
     function toggleGangway(field) {
         data[currentCar-1][field] = !data[currentCar-1][field];
+        saveState();
         render();
     }
     
     function resetCurrentCar() {
         if(confirm(`Wagen ${currentCar} wirklich auf Null setzen?`)) {
             data[currentCar-1] = emptyCar();
+            saveState();
             render();
         }
     }
@@ -238,6 +281,11 @@ document.querySelectorAll('input').forEach(input => {
 
         data = [emptyCar()];
         currentCar = 1;
+        try {
+            localStorage.removeItem('counterState');
+        } catch (error) {
+            console.warn('Gespeicherter Zustand konnte nicht gelöscht werden.', error);
+        }
         ['trainNumber', 'productID', 'vehicleType', 'fromStation', 'toStation'].forEach(id => {
             document.getElementById(id).value = '';
         });
@@ -246,7 +294,6 @@ document.querySelectorAll('input').forEach(input => {
             list.style.display = 'none';
         });
         render();
-        location.reload();
     }
 
     async function save() {
@@ -284,6 +331,10 @@ document.querySelectorAll('input').forEach(input => {
         }
     }
 
+    ['trainNumber', 'productID', 'vehicleType', 'fromStation', 'toStation'].forEach(id => {
+        document.getElementById(id).addEventListener('input', saveState);
+    });
+    restoreState();
     render();
 </script>
 </body>
