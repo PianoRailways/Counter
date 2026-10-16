@@ -2,10 +2,17 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Zähler">
+    <meta name="theme-color" content="#f0f0f0">
     <title>Frequenz-Zähler</title>
     <script src="didokmappingcounter.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
 
@@ -24,8 +31,6 @@
         <div id="suggestions-toStation" class="suggestions-list"></div>
     </div>
 </div>
-
-    <datalist id="stationen"></datalist>
 
     <div id="display">Lade...</div>
 

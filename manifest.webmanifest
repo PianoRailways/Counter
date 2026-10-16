@@ -1,0 +1,10 @@
+{
+  "name": "Frequenz-Zähler",
+  "short_name": "Zähler",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f0f0f0",
+  "theme_color": "#f0f0f0"
+}
