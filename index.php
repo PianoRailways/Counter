@@ -74,8 +74,43 @@
     let currentCar = 1;
 
     let currentFocus = -1;
+    let stationIndex;
+    let suggestionTimer;
 
 function updateSuggestions(el) {
+    window.clearTimeout(suggestionTimer);
+    suggestionTimer = window.setTimeout(() => renderSuggestions(el), 80);
+}
+
+function getStationIndex() {
+    if (stationIndex) return stationIndex;
+
+    const byName = new Map();
+    Object.entries(window.didokMapping || {}).forEach(([rawId, rawName]) => {
+        const id = String(rawId).trim();
+        if (!id || /^\d+$/.test(id)) return;
+        const name = String(Array.isArray(rawName) ? rawName[0] : rawName).trim();
+        if (!name) return;
+        const nameUp = name.toUpperCase();
+        const existing = byName.get(nameUp);
+        if (existing) {
+            existing.ids.push(id);
+            existing.ids.sort((a, b) => a.length - b.length || a.localeCompare(b));
+        } else {
+            byName.set(nameUp, { name, nameUp, ids: [id] });
+        }
+    });
+
+    stationIndex = Array.from(byName.values()).map(station => ({
+        id: station.ids.join(', '),
+        idUp: station.ids.join(', ').toUpperCase(),
+        name: station.name,
+        nameUp: station.nameUp
+    }));
+    return stationIndex;
+}
+
+function renderSuggestions(el) {
     const val = el.value.toUpperCase().trim();
     const listId = "suggestions-" + el.id;
     const listContainer = document.getElementById(listId);
@@ -86,14 +121,9 @@ function updateSuggestions(el) {
 
     if (val.length < 1 || !window.didokMapping) return;
 
-    let suggestions = [];
-    for (let key in window.didokMapping) {
-        const id = String(key).toUpperCase();
-        const name = String(window.didokMapping[key]);
-        if (id.includes(val) || name.toUpperCase().includes(val)) {
-            suggestions.push({ id, name });
-        }
-    }
+    const suggestions = getStationIndex().filter(station =>
+        station.idUp.includes(val) || station.nameUp.includes(val)
+    );
 
     // Intelligente Sortierung
 
@@ -101,8 +131,8 @@ function updateSuggestions(el) {
 		const query = val.toUpperCase();
 		const aName = a.name.toUpperCase();
 		const bName = b.name.toUpperCase();
-		const aId = a.id.toUpperCase();
-		const bId = b.id.toUpperCase();
+		const aId = a.idUp;
+		const bId = b.idUp;
 
 		// 1. Priorität: Exakter Treffer bei der ID (z.B. "BN")
 		if (aId === query && bId !== query) return -1;
@@ -125,7 +155,11 @@ function updateSuggestions(el) {
         suggestions.slice(0, 15).forEach((s, index) => {
             const div = document.createElement("div");
             div.className = "suggestion-item";
-            div.innerHTML = `<span>${s.name}</span><b>${s.id}</b>`;
+            const name = document.createElement("span");
+            name.textContent = s.name;
+            const id = document.createElement("b");
+            id.textContent = s.id;
+            div.append(name, id);
             div.onpointerdown = function(e) {
                 e.preventDefault();
                 el.value = s.name;
