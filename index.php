@@ -17,7 +17,7 @@
 <body>
 
     <div class="row header-row">
-        <input id="trainNumber" type="tel" inputmode="numeric" placeholder="Fahrtnummer" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input id="trainNumber" type="tel" placeholder="Fahrtnummer" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <input id="productID" placeholder="Kategorie" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <input id="vehicleType" placeholder="Fz-Typ" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
