@@ -19,12 +19,38 @@ body {
 	font-family: sans-serif;
 }
 .row { display: flex; gap: 5px; margin-bottom: 5px; align-items: flex-start; }
-input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; flex: 1; min-width: 0; outline: none; }
+input {
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 16px;
+	height: 44px;
+	box-sizing: border-box;
+	flex: 1;
+	min-width: 0;
+	outline: none;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+}
 
 #display { background: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold; line-height: 1.4;}
 
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
-button { min-width: 0; aspect-ratio: 1/1; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: clamp(15px, 5vw, 22px); cursor: pointer; }
+button {
+	min-width: 0;
+	aspect-ratio: 1/1;
+	border: none;
+	border-radius: 6px;
+	color: white;
+	font-weight: bold;
+	font-size: clamp(15px, 5vw, 22px);
+	cursor: pointer;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+}
 button:active { opacity: 0.6; }
 
 .b1 { background: var(--c1); color: #000; }
@@ -56,7 +82,7 @@ button:active { opacity: 0.6; }
 	width: 100%;
 	box-sizing: border-box; /* Wichtig, damit Padding den Input nicht sprengt */
 	padding: 10px;
-	font-size: 10px;
+	font-size: 16px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	outline: none;
@@ -72,7 +98,7 @@ button:active { opacity: 0.6; }
 	border-top: none;
 	border-radius: 0 0 4px 4px;
 	z-index: 1000;
-	max-height: 250px;
+	max-height: min(40dvh, 250px);
 	overflow-y: auto;
 	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 	display: none;
@@ -81,7 +107,11 @@ button:active { opacity: 0.6; }
 .suggestion-item {
 	padding: 10px;
 	cursor: pointer;
-	font-size: 14px;
+	font-size: 16px;
+	min-height: 44px;
+	box-sizing: border-box;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 	border-bottom: 1px solid #eee;
 	display: flex;
 	justify-content: space-between;

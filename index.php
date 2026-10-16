@@ -17,17 +17,17 @@
 <body>
 
     <div class="row">
-        <input id="trainNumber" type="tel" placeholder="Fahrtnummer">
-        <input id="productID" placeholder="Kategorie">
-        <input id="vehicleType" placeholder="Fz-Typ">
+        <input id="trainNumber" type="tel" inputmode="numeric" placeholder="Fahrtnummer" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input id="productID" placeholder="Kategorie" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input id="vehicleType" placeholder="Fz-Typ" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
     <div class="row">
     <div class="suggestions-container">
-        <input id="fromStation" placeholder="Von" autocomplete="off" oninput="updateSuggestions(this, event)">
+        <input id="fromStation" placeholder="Von" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="updateSuggestions(this)">
         <div id="suggestions-fromStation" class="suggestions-list"></div>
     </div>
     <div class="suggestions-container">
-        <input id="toStation" placeholder="Bis" autocomplete="off" oninput="updateSuggestions(this, event)">
+        <input id="toStation" placeholder="Bis" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="updateSuggestions(this)">
         <div id="suggestions-toStation" class="suggestions-list"></div>
     </div>
 </div>
@@ -62,9 +62,9 @@
     </div>
 
     <div class="row" style="margin-top:10px;">
-        <input id="comments" placeholder="Bemerkung zum Wagen..." oninput="updateComment()">
-        <button id="frontGangwayClosedButton" class="bgangway btn-small" style="grid-column: span 2; height: 33.5px;" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
-        <button id="rearGangwayClosedButton" class="bgangway btn-small" style="grid-column: span 2; height: 33.5px;" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
+        <input id="comments" placeholder="Bemerkung zum Wagen..." enterkeyhint="done" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="updateComment()">
+        <button id="frontGangwayClosedButton" class="bgangway btn-small" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
+        <button id="rearGangwayClosedButton" class="bgangway btn-small" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>
 
     </div>
 
@@ -75,7 +75,7 @@
 
     let currentFocus = -1;
 
-function updateSuggestions(el, event) {
+function updateSuggestions(el) {
     const val = el.value.toUpperCase().trim();
     const listId = "suggestions-" + el.id;
     const listContainer = document.getElementById(listId);
@@ -126,20 +126,34 @@ function updateSuggestions(el, event) {
             const div = document.createElement("div");
             div.className = "suggestion-item";
             div.innerHTML = `<span>${s.name}</span><b>${s.id}</b>`;
-            div.onclick = function() {
+            div.onpointerdown = function(e) {
+                e.preventDefault();
                 el.value = s.name;
                 listContainer.style.display = 'none';
+                el.blur();
             };
             listContainer.appendChild(div);
         });
     }
 }
 
-// Schließen des Menüs bei Klick außerhalb
-document.addEventListener("click", function (e) {
-    if (!e.target.classList.contains('suggestions-list') && e.target.tagName !== 'INPUT') {
+// Schließen des Menüs bei Interaktion außerhalb
+function closeSuggestionsOutside(e) {
+    if (!e.target.closest('.suggestions-container')) {
         document.querySelectorAll('.suggestions-list').forEach(l => l.style.display = 'none');
     }
+}
+document.addEventListener("click", closeSuggestionsOutside);
+document.addEventListener("touchstart", closeSuggestionsOutside, { passive: true });
+document.addEventListener("pointerdown", closeSuggestionsOutside);
+
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('focusout', () => {
+        window.setTimeout(() => window.scrollTo(0, 0), 100);
+    });
+    input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') input.blur();
+    });
 });
 
     function render() {
