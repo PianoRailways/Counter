@@ -16,12 +16,12 @@
 </head>
 <body>
 
-    <div class="row">
+    <div class="row header-row">
         <input id="trainNumber" type="tel" inputmode="numeric" placeholder="Fahrtnummer" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <input id="productID" placeholder="Kategorie" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <input id="vehicleType" placeholder="Fz-Typ" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
-    <div class="row">
+    <div class="row station-row">
     <div class="suggestions-container">
         <input id="fromStation" placeholder="Von" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="updateSuggestions(this)">
         <div id="suggestions-fromStation" class="suggestions-list"></div>
@@ -62,7 +62,7 @@
         <button class="bres btn-small btn-reset-all" onclick="resetAll()">Alles Reset</button>
     </div>
 
-    <div class="row" style="margin-top:10px;">
+    <div class="row comments-row">
         <input id="comments" placeholder="Bemerkung zum Wagen..." enterkeyhint="done" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="updateComment()">
         <button id="frontGangwayClosedButton" class="bgangway btn-small" onclick="toggleGangway('frontGangwayClosed')">Vorne zu</button>
         <button id="rearGangwayClosedButton" class="bgangway btn-small" onclick="toggleGangway('rearGangwayClosed')">Hinten zu</button>

@@ -19,6 +19,17 @@ body {
 	font-family: sans-serif;
 }
 .row { display: flex; gap: 5px; margin-bottom: 5px; align-items: flex-start; }
+.header-row, .station-row { gap: 6px; }
+.comments-row { gap: 6px; margin-top: 10px; align-items: stretch; }
+.comments-row input { flex: 1 1 auto; }
+.comments-row .bgangway {
+	flex: 0 0 auto;
+	aspect-ratio: auto;
+	height: 44px;
+	padding: 0 12px;
+	white-space: nowrap;
+	font-size: 13px;
+}
 input {
 	padding: 10px;
 	border: 1px solid #ccc;
