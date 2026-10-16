@@ -34,6 +34,21 @@ input {
 }
 
 #display { background: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold; line-height: 1.4;}
+#toast {
+	position: fixed;
+	left: 50%;
+	bottom: max(10px, env(safe-area-inset-bottom));
+	z-index: 1100;
+	padding: 10px 16px;
+	border-radius: 6px;
+	background: #212121;
+	color: white;
+	opacity: 0;
+	transform: translate(-50%, 10px);
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
 button {

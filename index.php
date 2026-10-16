@@ -33,6 +33,7 @@
 </div>
 
     <div id="display">Lade...</div>
+    <div id="toast" role="status" aria-live="polite"></div>
 
     <div class="grid">
         <button class="b1" onclick="change('firstClass', 1)">A +1</button>
@@ -276,9 +277,7 @@ document.querySelectorAll('input').forEach(input => {
         }
     }
 
-    function resetAll() {
-        if (!confirm("Gesamte Frequenzerhebung löschen?")) return;
-
+    function resetCounterState() {
         data = [emptyCar()];
         currentCar = 1;
         try {
@@ -294,6 +293,18 @@ document.querySelectorAll('input').forEach(input => {
             list.style.display = 'none';
         });
         render();
+    }
+
+    function resetAll() {
+        if (confirm("Gesamte Frequenzerhebung löschen?")) resetCounterState();
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.remove('visible');
+        window.requestAnimationFrame(() => toast.classList.add('visible'));
+        window.setTimeout(() => toast.classList.remove('visible'), 2000);
     }
 
     async function save() {
@@ -312,22 +323,38 @@ document.querySelectorAll('input').forEach(input => {
             cars: data
         };
 
+        const saveButton = document.querySelector('.btn-save');
+        const originalText = saveButton.textContent;
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 15000);
+        saveButton.disabled = true;
+        saveButton.textContent = "Speichert...";
+
         try {
             const res = await fetch('api.php', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload) 
+                body: JSON.stringify(payload),
+                signal: controller.signal
             });
             const resData = await res.json();
 
             if (resData.status === 'success') {
-                alert("Daten erfolgreich übermittelt!");
-                location.reload(); 
+                showToast("Daten erfolgreich übermittelt!");
+                resetCounterState();
             } else {
                 alert("Fehler beim Speichern: " + resData.message);
             }
-        } catch(e) { 
-            alert("Serverfehler: Verbindung zum Server unterbrochen."); 
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                alert("Speichern abgebrochen: Der Server hat nicht rechtzeitig geantwortet.");
+            } else {
+                alert("Speichern fehlgeschlagen: Bitte Verbindung prüfen und erneut versuchen.");
+            }
+        } finally {
+            window.clearTimeout(timeout);
+            saveButton.disabled = false;
+            saveButton.textContent = originalText;
         }
     }
 
