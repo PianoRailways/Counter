@@ -55,10 +55,10 @@
         <button class="bnav" onclick="prev()">« Wg -1</button>
         <button class="bnav" onclick="next()">Wg » +1</button>
 
-        <button class="bexp" style="grid-column: span 4; aspect-ratio: auto; height: 40px;" onclick="save()">Speichern</button>
+        <button class="bexp btn-save" onclick="save()">Speichern</button>
         
-        <button class="bwres btn-small" style="grid-column: span 2;" onclick="resetCurrentCar()">Wg. Reset</button>
-        <button class="bres btn-small" style="grid-column: span 2;" onclick="resetAll()">Alles Reset</button>
+        <button class="bwres btn-small btn-reset-car" onclick="resetCurrentCar()">Wg. Reset</button>
+        <button class="bres btn-small btn-reset-all" onclick="resetAll()">Alles Reset</button>
     </div>
 
     <div class="row" style="margin-top:10px;">

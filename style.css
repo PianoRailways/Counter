@@ -3,14 +3,28 @@
 	--dog: #4caf50; --bike: #2196f3; --nav: #8bc34a;
 	--exp: #212121; --res: #f44336; --wres: #fb8c00;
 }
-body { width: 375px; margin: 0 auto; background: #f0f0f0; padding: 10px; font-family: sans-serif; }
+html, body { -webkit-text-size-adjust: 100%; overscroll-behavior-y: none; }
+body {
+	width: 100%;
+	max-width: 480px;
+	margin: 0 auto;
+	background: #f0f0f0;
+	padding-top: max(10px, env(safe-area-inset-top));
+	padding-right: max(10px, env(safe-area-inset-right));
+	padding-bottom: max(10px, env(safe-area-inset-bottom));
+	padding-left: max(10px, env(safe-area-inset-left));
+	box-sizing: border-box;
+	min-height: 100vh;
+	min-height: 100dvh;
+	font-family: sans-serif;
+}
 .row { display: flex; gap: 5px; margin-bottom: 5px; align-items: flex-start; }
 input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; flex: 1; min-width: 0; outline: none; }
 
 #display { background: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold; line-height: 1.4;}
 
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
-button { min-width: 0; aspect-ratio: 1/1; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 20px; cursor: pointer; }
+button { min-width: 0; aspect-ratio: 1/1; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: clamp(15px, 5vw, 22px); cursor: pointer; }
 button:active { opacity: 0.6; }
 
 .b1 { background: var(--c1); color: #000; }
@@ -22,6 +36,8 @@ button:active { opacity: 0.6; }
 .bexp { background: var(--exp); }
 
 .btn-small { aspect-ratio: auto; height: 40px; font-size: 15px; }
+.btn-save { grid-column: span 4; aspect-ratio: auto; height: 40px; }
+.btn-reset-car, .btn-reset-all { grid-column: span 2; }
 .bwres { background: var(--wres); }
 .bres { background: var(--res); }
 .bgangway { background: #757575; font-size: 13px; }
@@ -31,7 +47,7 @@ button:active { opacity: 0.6; }
 .suggestions-container {
 	flex: 1;
 	position: relative;
-	min-width: 0;;
+	min-width: 0;
 }
 
 
